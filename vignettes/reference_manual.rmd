@@ -1,0 +1,39 @@
+---
+title: "SMTrackR"
+author: "Aashna Bansal, Satyanarayan Rao"
+date: "2025-06-12"
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_depth: 2
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+Single-molecule assays like NOMe-seq, and dSMF are superior to DNase-seq and ATAC-seq as they do not nibble down DNA. Thus, they enable quantification of all three i.e., protein-free, Transcription Factor-bound and histone-complex-bound states. But a user-friendly tool to visualize and quantify such states is lacking. SMTrackR, a Bioconductor package visualizes protein-DNA binding states on individual sequenced DNA molecules. SMTrackR queries the single-molecule footprint database we built and hosted at Galaxy Server. It comprises of BigBed files generated from NOMe-seq and dSMF datasets. SMTrackR exploits UCSC REST API to query a BigBed file and plot footprint heatmap categorized in different binding states as well as report their occupancies.  
+## Installation
+```{r, echo = T}
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("SMTrackR")
+```
+## Loading the package
+```{r, echo = T}
+library(TestSMTR)
+```
+## Listing Available Track
+```{r plotting, echo = TRUE}
+
+TestSMTR::listTracks()
+```
+
+## Plot Single Molecules
+```{r, fig.width=4.5, fig.height=6, echo=TRUE}
+TestSMTR::plotFootprints()
+```
+

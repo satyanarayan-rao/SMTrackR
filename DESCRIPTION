@@ -1,0 +1,17 @@
+Package: SMTrackR
+Type: Package
+Title: Quantifies protein-DNA binding occupancies
+Version: 1.0
+Date: 2024-12-31
+Author: Aashna Bansal, Shivam Kumar Yadav, Satyanarayan Rao
+Maintainer: Aashna Bansal <aashna_b.iitr@bt.iitr.ac.in>
+Description: Uses Bisulfite converted reads to infer protein-DNA binding
+biocViews: protein-DNA binding, single-molecule, dSMF, NOMe-seq
+License: MIT
+Imports: jsonlite, GenomicRanges, rtracklayer, stringr, gsheet
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.3.2
+Encoding: UTF-8
