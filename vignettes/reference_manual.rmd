@@ -2,6 +2,10 @@
 title: "SMTrackR"
 author: "Aashna Bansal, Satyanarayan Rao"
 date: "2025-06-12"
+vignette: >
+      %\VignetteIndexEntry{SMTrackR}
+      %\VignetteEngine{knitr::rmarkdown}
+      \usepackage[utf8]{inputenc}
 output: 
   BiocStyle::html_document:
     toc: true
@@ -21,6 +25,7 @@ Single-molecule assays like NOMe-seq, and dSMF are superior to DNase-seq and ATA
 #     install.packages("BiocManager")
 # 
 # BiocManager::install("SMTrackR")
+# rmarkdown::html_vignette
 ```
 ## Loading the package
 ```{r, echo = T}
@@ -36,4 +41,7 @@ TestSMTR::listTracks()
 ```{r, fig.width=4.5, fig.height=6, echo=TRUE}
 TestSMTR::plotFootprints()
 ```
-
+## Session Info
+```{r, echo = TRUE}
+sessionInfo()
+```

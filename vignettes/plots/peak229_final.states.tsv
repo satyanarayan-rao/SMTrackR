@@ -1,0 +1,4 @@
+state	count	state_label	line_loc	prev_point	label_loc	percentage	total	annotation
+0	105	D	452	347	399.5	0.232300884955752	452	peak229_final
+1	114	T	347	233	290	0.252212389380531	452	peak229_final
+2	233	N	233	0	116.5	0.515486725663717	452	peak229_final

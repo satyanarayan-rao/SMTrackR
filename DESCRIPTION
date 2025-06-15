@@ -1,17 +1,27 @@
 Package: SMTrackR
 Type: Package
-Title: Quantifies protein-DNA binding occupancies
-Version: 1.0
+Title: SMTrackR: a R/Bioconductor package for mapping protein binding at individual DNA molecules
+Version: 0.9.0
 Date: 2024-12-31
-Author: Aashna Bansal, Shivam Kumar Yadav, Satyanarayan Rao
-Maintainer: Aashna Bansal <aashna_b.iitr@bt.iitr.ac.in>
-Description: Uses Bisulfite converted reads to infer protein-DNA binding
-biocViews: protein-DNA binding, single-molecule, dSMF, NOMe-seq
-License: MIT
-Imports: jsonlite, GenomicRanges, rtracklayer, stringr, gsheet
-Suggests:
-    knitr,
-    rmarkdown
+Authors@R:
+    c( person (given = "Aashna",
+               family = "Bansal", 
+               role = c("aut", "ctb"),
+               email = "aashna_b@bt.iitr.ac.in"),
+       person (given = "Shivam K",
+               family = "Yadav", 
+               role = c("aut", "ctb"),
+               email = "shivam_y@bt.iitr.ac.in"),
+       person (given = "Satyanarayan",
+               family = "Rao", 
+               role = c("aut", "cre"),
+               email = "satyanarayan.rao@bt.iitr.ac.in")
+     )
+Description: Uses Bisulfite converted reads to infer protein-DNA binding.
+biocViews: NucleosomePositioning, Visualization
+Imports: jsonlite, GenomicRanges, rtracklayer, stringr, gsheet 
+License: file LICENSE
+Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
 Encoding: UTF-8
+RoxygenNote: 7.3.2
