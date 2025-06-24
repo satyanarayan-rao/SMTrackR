@@ -70,9 +70,9 @@ fp_info_for_sub_molecule <- function (
         fp_len_query <- c (fp_len_query,
                            fp_len_at_each_pos[idx_on_long_molecule])
     }
-    return (list (fp_len_query <- fp_len_query,
-                  fp_start_loci_on_query <- fp_start_loci_on_query,
-                  abs_fp_start_in_query <- abs_fp_start_in_query))
+    return (list (fp_len_query = fp_len_query,
+                  fp_start_loci_on_query = fp_start_loci_on_query,
+                  abs_fp_start_in_query = abs_fp_start_in_query))
 }
 
 extend_fp_from_center <- function (
@@ -438,8 +438,8 @@ assign_binding_states <- function (overlap_string = "",
             max_contribution_in_the_intersect]
         abs_fp_start_on_complete_fp <- fp_info_query$abs_fp_start_in_query[
             abs_start_loc_of_max]
-        if (total_percent_fp_in_intersect <= 30
-            && percentage_methylation > 25){
+        if (total_percent_fp_in_intersect <= 30 &&
+            percentage_methylation > 25){
             labelled = paste(overlap_string, intersected_fp_str,
                              max_percentage_overlap,
                              length_of_max_contribution,
@@ -530,18 +530,18 @@ convert_m_char_to_num <- function (char_vector = "MMM...x..X..H...hh...MMMM"){
     return (ret)
 }
 saveToPDF <- function(...) {
-    d = dev.copy(pdf,...)
-    dev.off(d)
+    d <- dev.copy(pdf,...);
+    dev.off(d);
 }
 
 saveToPNG <- function(...) {
-    d = dev.copy(png,...)
-    dev.off(d)
+    d <- dev.copy(png,...);
+    dev.off(d);
 }
 
 saveToEPS <- function(...) {
-    d = dev.copy(postscript,...)
-    dev.off(d)
+    d <- dev.copy(postscript,...);
+    dev.off(d);
 }
 label_list <- list ("Naked_DNA" = 0, "TF" = 1,
                     "Nuc" = 2, "discard" = 3)
@@ -561,7 +561,7 @@ getHubURL <- function (organism = "dmelanogaster",
     return (track_url)
 }
 remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
-                                        label = "peak229_final"){
+                                        label = "peak229"){
     # the data is coming from big bed file, so the coordinates
     # are ought to be sorted
     dt <- read.table(fp_file, sep = "\t", header = FALSE,
@@ -569,7 +569,8 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
     dt ["srr"] <-  unlist (lapply (dt$V4, function (x) {
         unlist (strsplit (x, split = "\\."))[[1]]}))
     dt["mol"] <- unlist (lapply (dt$V4,
-                                 function (x) {unlist (strsplit (x, split = "`"))[[2]]}))
+                                 function (x) {unlist (
+                                     strsplit (x, split = "`"))[[2]]}))
     idx_duplicate <- which (duplicated(dt[, c ("V1", "V2", "V3",
                                                "srr", "mol")]))
     uniq_mol_df = dt[-idx_duplicate, ]
@@ -598,7 +599,7 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
 #' @param model Biological model/system (default: "S2" cells)
 #' @param condition Experimental condition (default: "WT")
 #' @param genome_assembly Genome version (default: "dm6")
-#' @param type Data type ("dSMF" = differential Single Molecule Footprinting)
+#' @param type Data type ("dSMF" = dual enzyme Single Molecule Footprinting)
 #' @param chromosome Chromosome ID (e.g., "chr2L")
 #' @param start Genomic start position (numeric/character)
 #' @param stop Genomic end position (numeric/character)
@@ -663,15 +664,10 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
     }else{
         subject_file <- tmp_file
     }
+    query_file <- prepareQueryFile(chromosome = chromosome,
+                                  start = start, stop = stop, label = label)
 
-    #print (subject_file)
-    query_file <- paste0(label, ".bed")
-    cat (paste(chromosome, start, stop, sep = "\t"),
-         file <- paste0(label, ".bed"))
-    cat ("\n", file = paste0(label, ".bed"), append = TRUE)
-
-
-    overlap_df = intersectQueryandSubject(query_file = query_file,
+    overlap_df <- intersectQueryandSubject(query_file = query_file,
                                           subject_file = subject_file)
     # successful execution of this function will ensure that `overlap` file is
     # generated
@@ -699,251 +695,130 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                                 function(x){
                                     add_footprints_on_edges(x[1], x[2])} ))
     processed_df <- overlap_df[, c(1,2,3,4,5,6)]
+    processed_df$read_details <- read_details
+    processed_df$score <- 1.0
+    processed_df$strand <- "."
+    processed_df$expanded_footprint <- with_edges
+    processed_df$expanded_m_vec <- expanded_m_vec
+    length_and_read_info_df <- writeBindingStatesFiles (
+        processed_df = processed_df,
+        label = label,fp_cap = fp_cap,
+        span_left = span_left, span_right = span_right)
+    ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
+                                                       order(binding_state_vec,
+                                                       flag_vec,
+                                                       abs_start_vec)),]
+
+    writeIntermediateFiles(ordered_by_length = ordered_by_length,
+                           label = label)
+
+    savePlotSMForDSMF(label = label, span_left = span_left, span_right = span_right)
+    #removing the intermediate files:
+    deleteIntermediates(label = label)
+
+}
+
+
+#' Visualize Single Molecule Footprint Patterns using Local BigBed file
+#'
+#' @description Generates footprint plots from SMF/dSMF data within specified genomic regions.
+#' Designed for Drosophila melanogaster analysis with expandable parameters for other organisms.
+#'
+#' @param bigBed BigBed file path (e.g., "demo.bb")
+#' @param chromosome Chromosome ID (e.g., "chr2L")
+#' @param start Genomic start position (numeric/character)
+#' @param stop Genomic end position (numeric/character)
+#' @param label Plot title annotation
+#' @param span_left Upstream window size from region (default: 150)
+#' @param span_right Downstream window size from region (default: 150)
+#' @param remove_dup Remove duplicate reads? (default: FALSE)
+#' @param fp_cap Maximum footprint value for y-axis scaling (default: 50)
+#'
+#' @return Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file
+#'
+#' @details
+#' This function uses local SMF/dSMF bigBed file and plot heatmap
+#'
+#'
+#' @examples
+#' # Basic usage with default parameters
+#' plotFootprintsUsingLocalBigBed()
+#'
+#' # Custom genomic region analysis
+#' plotFootprints(
+#'   chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+#'
+#' @export
+plotFootprintsUsingLocalBigBed <- function(
+        bigBed = "inst/extdata/demo.bb",
+        chromosome = "chr2L",start = "480290", stop = "480320",
+        label = "peak229", span_left = 150, span_right = 150,
+        remove_dup = FALSE,fp_cap = 50) {
+    # Function implementation
+}
+
+
+plotFootprintsUsingLocalBigBed <- function (
+        bigBed = "inst/extdata/demo.bb",
+        chromosome = "chr2L",start = "480290", stop = "480320",
+        label = "peak229", span_left = 150, span_right = 150,
+        remove_dup = FALSE,fp_cap = 50) {
+    query_file <- prepareQueryFile(chromosome = chromosome,
+                                   start = start, stop = stop, label = label)
+
+    overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
+                                     query_file = query_file)
+    # successful execution of this function will ensure that `overlap` file is
+    # generated
+    # get the second last column of the overlap_df and parse it using "|" as
+    # delimiter. Example:
+    # SRR3133329.41244179_41244179/1_adjacent`99~147|.131F52.77F35.5|.19h.33z.30h.14h.9z.20Z.4z.47H.3X.4H.Z.8Z.H.5Z.8X.9Z.18H.9Z.18x.16H.4
+    # 2nd field is footprint, 3rd field is methylation vector
+    fp_and_mvec_info <- paste(overlap_df$name, overlap_df$field8, sep = "|")
+    read_details <- unlist (lapply(fp_and_mvec_info,
+                                   function (x) {
+                                       yt = unlist(strsplit(x, split = "\\|")
+                                       )[1] }))
+    fp_vec <- unlist (lapply(fp_and_mvec_info,
+                             function (x) {
+                                 yt = unlist(strsplit(x, split = "\\|")
+                                 )[2] }))
+    m_vec <- unlist (lapply(fp_and_mvec_info,
+                            function (x) {
+                                yt = unlist(strsplit(x, split = "\\|"))[3] }))
+    expanded_fp <- unlist(lapply(fp_vec, expand_cigar_string))
+    expanded_m_vec <- unlist (lapply(m_vec, expand_cigar_string))
+    combined <- data.frame (expanded_m_vec = expanded_m_vec,
+                            expanded_fp = expanded_fp)
+    with_edges <- unlist (apply(combined, 1,
+                                function(x){
+                                    add_footprints_on_edges(x[1], x[2])} ))
+    processed_df <- overlap_df[, c(1,2,3,4,5,6)]
     #print (head (processed_df))
     processed_df$read_details <- read_details
     processed_df$score <- 1.0
     processed_df$strand <- "."
     processed_df$expanded_footprint <- with_edges
     processed_df$expanded_m_vec <- expanded_m_vec
-    # For each row in the dataframe, create a string by collapsing it by "\t"
-    # and pass it to the function assign_binding_states
-    ofp <- file (paste0(label, "_assigned_states.tsv"), "w")
-    ofp_verbose <- file (paste0(label, "_verbose.tsv"), "w")
-    max_length_vec <- c()
-    read_info_vec <- c()
-    abs_start_vec <- c()
-    fp_vec <- c ()
-    m_vec <- c()
-    binding_state_vec <- c()
-    flag_vec <- c()
+    length_and_read_info_df <- writeBindingStatesFiles (
+        processed_df = processed_df,
+        label = label,fp_cap = fp_cap,
+        span_left = span_left, span_right = span_right)
+    ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
+                                                       order(binding_state_vec,
+                                                             flag_vec,
+                                                             abs_start_vec)),]
 
-    for (idx in seq (nrow(processed_df)) ){
-        line <- paste (processed_df[idx, ], collapse = "\t")
-        #print (line)
-        assigned_states <- assign_binding_states(line, fp_cap = fp_cap)
-        #print (assigned_states)
-        cat (assigned_states$labelled, file = ofp, append = TRUE)
-        cat("\n", file = ofp, append = TRUE)
-        #print (assigned_states$read_id)
-        ## Generate the fp extended file
-        sub_molecule_fp <- assigned_states$intersected_fp_str
-        sub_molecule_m <- assigned_states$intersected_m_str
-        complete_molecule_fp <- assigned_states$complete_fp_str
-        complete_molecule_m <- assigned_states$complete_m_str
-        read_id <- assigned_states$read_id
-        abs_roi_start <- assigned_states$abs_roi_start
-        abs_roi_end <- assigned_states$abs_roi_end
-        abs_read_start <- assigned_states$abs_read_start
-        abs_read_end <- assigned_states$abs_read_end
-        label_id <- assigned_states$label_id
-        chrQ <- assigned_states$chrQ
-        marker <- paste0(chrQ,":", abs_roi_start, "-", abs_roi_end, "`",
-                         read_id, "#", label_id)
-        extended_fp <- extend_fp_from_center(
-            sub_moleculue = sub_molecule_fp,
-            complete_molecule = complete_molecule_fp,
-            abs_roi_start = abs_roi_start,
-            abs_roi_end = abs_roi_end,
-            abs_complete_molecule_start = abs_read_start,
-            abs_complete_molecule_end = abs_read_end,
-            lextend = span_left, rextend = span_right)
-        extended_m <- extend_fp_from_center(
-            sub_moleculue = sub_molecule_m,
-            complete_molecule = complete_molecule_m,
-            abs_roi_start = abs_roi_start,
-            abs_roi_end = abs_roi_end,
-            abs_complete_molecule_start = abs_read_start,
-            abs_complete_molecule_end = abs_read_end,
-            lextend = span_left, rextend = span_right)
-        cat(paste0(marker, "\t", extended_fp, "\t", extended_m),
-            file = ofp_verbose, append = TRUE)
-        cat ("\n", file = ofp_verbose, append =  TRUE)
+    writeIntermediateFiles(ordered_by_length = ordered_by_length,
+                           label = label)
 
-        tmp <- unlist(strsplit(marker, split = "`"))
-        flag_and_state <- unlist(strsplit(tmp[length(tmp)], split = "#"))
-        flag <- flag_and_state[1]
-        state <- flag_and_state[2]
-        fp_without_m <- str_replace_all(extended_fp, "M", ".")
-        fp_info <- fp_info_for_complete_molecule(fp_without_m)
-        if (length(fp_info$just_length_vec) > 0){
-            max_length <- max (fp_info$just_length_vec)
-            which_max <- which.max (fp_info$just_length_vec)
-            read_info_vec <- c(read_info_vec, marker)
-            max_length_vec <- c (max_length_vec, max_length)
-            abs_start_vec <- c (abs_start_vec,
-                                fp_info$fp_start_locus[which_max])
-            fp_vec <- c(fp_vec, extended_fp)
-            m_vec <- c(m_vec, extended_m)
-            flag_vec <- c(flag_vec, flag)
-            binding_state_vec <- c(binding_state_vec, state)
-        }else {
-            read_info_vec <- c(read_info_vec, marker)
-            max_length_vec <- c (max_length_vec, 0)
-            abs_start_vec <- c(abs_start_vec, (0 - span_left) )
-            fp_vec <- c(fp_vec, extended_fp)
-            m_vec <- c(m_vec, extended_m)
-            flag_vec <- c(flag_vec, flag)
-            binding_state_vec <- c(binding_state_vec, state)
-        }
-
-    }
-    close(ofp)
-    close(ofp_verbose)
-    length_and_read_info_df <- data.frame(read_id = read_info_vec,
-                                          binding_state_vec = binding_state_vec,
-                                          flag_vec = flag_vec,
-                                          max_fp_length = max_length_vec,
-                                          abs_start_vec = abs_start_vec,
-                                          fp_vec = fp_vec,
-                                          m_vec = m_vec)
-    ordered_by_length <- length_and_read_info_df[order(binding_state_vec,
-                                                       flag_vec,
-                                                       abs_start_vec),]
-
-    write.table(ordered_by_length,
-                file = paste0(label, "_labelled_and_ordered.tsv"),
-                sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    num_coverted_fp <- unlist (lapply(ordered_by_length$fp_vec,
-                                      function (x) {convert_fp_char_to_num(x)}))
-    num_coverted_m <- unlist (lapply(ordered_by_length$m_vec,
-                                     function (x) {convert_m_char_to_num(x)}))
-    num_fp_df <- data.frame(read_id = ordered_by_length$read_id,
-                            num_coverted_fp = num_coverted_fp)
-    num_mvec_df <- data.frame(read_id = ordered_by_length$read_id,
-                              num_coverted_m = num_coverted_m)
-    write.table (num_fp_df, file = paste0(label, ".num.fp.tsv"),
-                 sep = "\t", row.names = FALSE,
-                 col.names = FALSE, quote = FALSE)
-    write.table (num_mvec_df, file = paste0(label, ".num.mvec.tsv"),
-                 sep = "\t", row.names = FALSE,
-                 col.names = FALSE, quote = FALSE)
-    dat_for_plot <- read.table(paste0(label, ".num.fp.tsv"),
-                               sep = "\t", header = FALSE,
-                               stringsAsFactors = FALSE,
-                               row.names = 1, comment.char = "%")
-    dat_for_plot <- dat_for_plot[!grepl("#3", row.names (dat_for_plot)), ]
-    #reverse the dataframe: bring bottom row to the top
-    #remove not valid states i.e. state 3 for now.
-
-    dat_for_plot <- apply(dat_for_plot, 2, rev)
-
-    main_dir <- file.path("./", "plots/")
-    if (!dir.exists(main_dir)){
-        dir.create(main_dir, recursive = TRUE)
-    }
-    plot_dir <- file.path("plots/")
-    if (!dir.exists(plot_dir)){
-        dir.create(plot_dir, recursive = TRUE)
-    }
-
-
-    all_valid_states <- data.frame(table(
-        unlist(lapply (row.names(dat_for_plot),
-                       function (x) {
-                           as.integer(unlist(strsplit(x, split= "#"))[-1]) }))))
-    names(all_valid_states) <- c("state", "count")
-    state_info <- c("2" = "N", "1" = "T", "0" = "D")
-    all_valid_states$state_label <- unlist(
-        lapply (all_valid_states$state,
-                function (x){state_info[as.character(x)]}))
-    all_valid_states$line_loc <- rev(cumsum(rev(all_valid_states$count)))
-    all_valid_states$prev_point <- c(all_valid_states$line_loc[-1], 0)
-    all_valid_states$label_loc <- (all_valid_states$line_loc +
-                                       all_valid_states$prev_point)/2
-    all_valid_states$percentage <- all_valid_states$count /
-        sum (all_valid_states$count)
-    all_valid_states$total <- sum (all_valid_states$count)
-    all_valid_states$annotation <- label
-    write.table(all_valid_states,
-                file.path(plot_dir, paste0(label, ".states.tsv")),
-                row.names = FALSE, col.names = TRUE, sep = "\t", quote = FALSE)
-    total_molecules <- nrow(dat_for_plot)
-
-    jj <- as.matrix (dat_for_plot)
-    x_width <- span_left + span_right + 1
-    if (nrow(jj) > 15){
-
-        par(mgp=c(1.5,0.25,0), cex = 0.75)
-        image(1:ncol(jj), 1:nrow(jj), t(jj),  axes = FALSE, useRaster = TRUE,
-              oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
-                                        "1"  = "Red" , "2" = "#2b8cbe"),
-              xlim = c(-30, x_width), xlab = label, ylab = "")
-
-
-        counter <- 1
-        for (i in rev(seq (nrow(all_valid_states)) )){
-            line_loc <- all_valid_states[i, "line_loc"]
-            label_loc <- all_valid_states[i, "label_loc"]
-            state_label <- all_valid_states[i, "state_label"]
-            cnt <- all_valid_states[i, "count"]
-
-            if (counter < nrow(all_valid_states)) {
-                segments(-30, (line_loc + 0.5), x_width,
-                         (line_loc + 0.5), lwd = 0.5)
-            }
-            if (counter == 1) {
-                text(-15, label_loc, paste0 ("State ",  state_label,
-                                             " ( n = ", cnt, ")"), srt = 90)
-            }else{
-                text(-15, label_loc, paste0 (state_label,
-                                             " (", cnt, ")"), srt = 90)
-            }
-            counter <- counter + 1
-        }
-
-
-
-        # Draw vertical red line +/- 15 bases from `0`
-        segments((span_left - 15) , 0, (span_left - 15),
-                 (total_molecules + 0.5), lwd = 0.5, col = "Red")
-        segments((span_left + 15), 0, (span_left + 15),
-                 (total_molecules + 0.5), lwd = 0.5, col = "Red")
-        ticks_at <- seq(0, span_left + span_right, 50)
-        lab_at_ticks <- as.character(ticks_at - as.integer(
-            (span_left + span_right)/2))
-        axis(1, ticks_at,
-             lab_at_ticks,
-             srt = 2, cex.lab = 0.5, tck = -0.01, tick = FALSE)
-
-        box(lwd=0.5)
-
-        saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
-                  height = 6, width = 4.5)
-        saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
-                  height = 6, width = 4.5, units = "in", res = 300)
-        saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
-                  height = 6, width = 4.5,
-                  horizontal = FALSE, paper = "special")
-    }else {
-
-        par(mgp=c(1.5,0.25,0), cex = 0.75)
-        plot(c(0, 1), c(0, 1), ann = FALSE, bty = 'n', type = 'n',
-             xaxt = 'n', yaxt = 'n')
-        text(x = 0.5, y = 0.5, paste0("Only ", nrow (jj),
-                                      " molecules, not enough for plotting"))
-
-        saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
-                  height = 6, width = 4.5)
-        saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
-                  height = 6, width = 4.5, units = "in", res = 300)
-        saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
-                  height = 6, width = 4.5,
-                  horizontal = FALSE, paper = "special")
-    }
-
-
+    savePlotSMForDSMF(label = label, span_left = span_left, span_right = span_right)
     #removing the intermediate files:
-    file.remove(paste0(label, "_assigned_states.tsv"))
-    file.remove(paste0(label, "_labelled_and_ordered.tsv"))
-    file.remove(paste0(label, "_verbose.tsv"))
-    file.remove(paste0(label, ".all_fp.bed"))
-    file.remove(paste0(label, ".bed"))
-    file.remove(paste0(label, ".json"))
-    file.remove(paste0(label, ".num.fp.tsv"))
-    file.remove(paste0(label, ".num.mvec.tsv"))
-
-
+    deleteIntermediates(label = label)
 }
+
+
+
 #' Discover Available Single Molecule Data Tracks
 #'
 #' @description Retrieves track metadata from a centralized Google Sheet containing
@@ -983,4 +858,5 @@ listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y
     sheet_data <- gsheet::gsheet2tbl(sheet_url)
     print(sheet_data)
 }
+
 

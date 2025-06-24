@@ -9,7 +9,8 @@ retrieve_json <- function (track_url = "", assembly = "dm6",
                            en = "480320", label = "peak229",
                            tr = "fp_and_mvec"){
 
-    download_command = paste0(track_url, ";", "genome=", assembly,";", "track=", tr, ";",
+    download_command = paste0(track_url, ";", "genome=", assembly,";",
+                              "track=", tr, ";",
                               "chrom=", chromosome,";",
                               "start=", st,";", "end=", en)
     print (download_command)
@@ -59,7 +60,8 @@ intersectQueryandSubject <- function(query_file = "peak229.bed",
                                      overlap = "peak229_overlap.bed") {
     q_obj <- import (query_file)
     s_obj <- import (subject_file)
-    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = q_obj@ranges@width, select = "all")
+    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = q_obj@ranges@width,
+                             select = "all")
     q_obj_to_write <- resize (q_obj[overlaps@from, ],
                              width(q_obj[overlaps@from, ]) + 1, fix = "end")
     q_df = as.data.frame(q_obj_to_write)
@@ -73,4 +75,34 @@ intersectQueryandSubject <- function(query_file = "peak229.bed",
     # now reading files again to prepare
 
 }
+prepareQueryFile <- function (chromosome = "chr2L",
+                              start = "480290",
+                              stop = "480320",
+                              label = "peak229"){
+    query_file <- paste0(label, ".bed")
+    cat (paste(chromosome, start, stop, sep = "\t"),
+         file = paste0(label, ".bed"))
+    cat ("\n", file = paste0(label, ".bed"), append = TRUE)
+    return (query_file)
+}
 
+overlapUsingBigBed <- function (
+        bigbed_file = "local_bigbed/demo.bb",
+        query_file = "peak229.bed"){
+    q_obj <- import (query_file)
+    s_obj <- import(bigbed_file, which = q_obj)
+    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = q_obj@ranges@width,
+                             select = "all")
+    q_obj_to_write <- resize (q_obj[overlaps@from, ],
+                              width(q_obj[overlaps@from, ]) + 1, fix = "end")
+    q_df = as.data.frame(q_obj_to_write)
+    sub_q_df <- q_df [, seq(3)]
+
+    s_obj_to_write <- resize (s_obj[overlaps@to, ],
+                              width (s_obj[overlaps@to, ]) + 1, fix = "end")
+    s_df <- as.data.frame(s_obj_to_write)
+    result_df <- cbind (sub_q_df, s_df)
+    print (head (result_df))
+    return (result_df)
+
+}
