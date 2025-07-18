@@ -46,6 +46,8 @@ savePlotSMForDSMF <- function (label = "peak229",
     x_width <- span_left + span_right + 1
     if (nrow(jj) > 15){
 
+        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
+             height = 6, width = 4.5)
         par(mgp=c(1.5,0.25,0), cex = 0.75)
         image(1:ncol(jj), 1:nrow(jj), t(jj),  axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
@@ -97,15 +99,18 @@ savePlotSMForDSMF <- function (label = "peak229",
         #saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
         #          height = 6, width = 4.5,
         #          horizontal = FALSE, paper = "special")
-        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
-             height = 6, width = 4.5)
+        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
+                 height = 6, width = 4.5, units = "in", res = 300)
+        dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
+                 height = 6, width = 4.5, 
+                 horizontal = FALSE, paper = "special")
         dev.off ()
-        png(file.path(plot_dir, paste0(label, ".plot.png")),
-            height = 6, width = 4.5, units = "in", res = 300)
+        #png(file.path(plot_dir, paste0(label, ".plot.png")),
+        #    height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
-        postscript(file.path(plot_dir, paste0(label, ".plot.eps")), 
-                   height = 6, width = 4.5, 
-                   horizontal = FALSE, paper = "special")
+        #postscript(file.path(plot_dir, paste0(label, ".plot.eps")), 
+        #           height = 6, width = 4.5, 
+        #           horizontal = FALSE, paper = "special")
         dev.off()
         
     }else {
