@@ -90,13 +90,24 @@ savePlotSMForDSMF <- function (label = "peak229",
 
         box(lwd=0.5)
 
-        saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
-                  height = 6, width = 4.5)
-        saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
-                  height = 6, width = 4.5, units = "in", res = 300)
-        saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
-                  height = 6, width = 4.5,
-                  horizontal = FALSE, paper = "special")
+        #saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
+        #          height = 6, width = 4.5)
+        #saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
+        #          height = 6, width = 4.5, units = "in", res = 300)
+        #saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
+        #          height = 6, width = 4.5,
+        #          horizontal = FALSE, paper = "special")
+        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
+             height = 6, width = 4.5)
+        dev.off ()
+        png(file.path(plot_dir, paste0(label, ".plot.png")),
+            height = 6, width = 4.5, units = "in", res = 300)
+        dev.off()
+        postscript(file.path(plot_dir, paste0(label, ".plot.eps")), 
+                   height = 6, width = 4.5, 
+                   horizontal = FALSE, paper = "special")
+        dev.off()
+        
     }else {
 
         par(mgp=c(1.5,0.25,0), cex = 0.75)
