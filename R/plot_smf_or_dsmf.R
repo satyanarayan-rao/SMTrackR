@@ -100,12 +100,13 @@ savePlotSMForDSMF <- function (label = "peak229",
         #saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
         #          height = 6, width = 4.5,
         #          horizontal = FALSE, paper = "special")
-        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
-                 height = 6, width = 4.5, units = "in", res = 300)
-        dev.control("enable")
         dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
+        dev.control("enable")
+
+        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
+                 height = 6, width = 4.5, units = "in", res = 300)
         dev.off ()
         #png(file.path(plot_dir, paste0(label, ".plot.png")),
         #    height = 6, width = 4.5, units = "in", res = 300)
@@ -113,6 +114,7 @@ savePlotSMForDSMF <- function (label = "peak229",
         #postscript(file.path(plot_dir, paste0(label, ".plot.eps")), 
         #           height = 6, width = 4.5, 
         #           horizontal = FALSE, paper = "special")
+        dev.off()
         dev.off()
         
     }else {
