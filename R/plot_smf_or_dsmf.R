@@ -47,7 +47,7 @@ savePlotSMForDSMF <- function (label = "peak229",
     if (nrow(jj) > 15){
 
         pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
-             height = 6, width = 4.5)
+             height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
         image(1:ncol(jj), 1:nrow(jj), t(jj),  axes = FALSE, useRaster = TRUE,
