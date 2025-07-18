@@ -107,31 +107,32 @@ savePlotSMForDSMF <- function (label = "peak229",
 
         dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
                  height = 6, width = 4.5, units = "in", res = 300)
-        dev.off ()
-        #png(file.path(plot_dir, paste0(label, ".plot.png")),
-        #    height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
-        #postscript(file.path(plot_dir, paste0(label, ".plot.eps")), 
-        #           height = 6, width = 4.5, 
-        #           horizontal = FALSE, paper = "special")
         dev.off()
         dev.off()
         
     }else {
 
+        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
+             height = 6, width = 4.5, bg = "white")
+        dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
         plot(c(0, 1), c(0, 1), ann = FALSE, bty = 'n', type = 'n',
              xaxt = 'n', yaxt = 'n');
         text(x = 0.5, y = 0.5, paste0("Only ", nrow (jj),
                                       " molecules, not enough for plotting"))
 
-        saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
-                  height = 6, width = 4.5)
-        saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
-                  height = 6, width = 4.5, units = "in", res = 300)
-        saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
-                  height = 6, width = 4.5,
-                  horizontal = FALSE, paper = "special")
+        dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
+                 height = 6, width = 4.5, 
+                 horizontal = FALSE, paper = "special")
+        dev.control("enable")
+
+        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
+                 height = 6, width = 4.5, units = "in", res = 300)
+        dev.off()
+        dev.off()
+        dev.off()
+        
     }
 
 }
