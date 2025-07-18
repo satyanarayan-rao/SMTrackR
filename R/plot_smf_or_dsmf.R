@@ -102,7 +102,7 @@ savePlotSMForDSMF <- function (label = "peak229",
         #          horizontal = FALSE, paper = "special")
         dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
                  height = 6, width = 4.5, units = "in", res = 300)
-        device.control("enable")
+        dev.control("enable")
         dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
