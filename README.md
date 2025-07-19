@@ -39,6 +39,9 @@ SMTrackR::plotFootprints(organism = "mmusculus", model = "8cell", condition = "W
                start = "113847750",  stop  = "113847780", tr = "8cell", label = "remove_dup_true", 
                fp_cap = 50, remove_dup = T)
 ```
+NOTE: the above run will create a directory `plots` in the current working
+directory which will have `remove_dup_true.plot.pdf`. 
+
 ### Using data from Drosophila Melanogaster S2 cells
 
 Please use the command below to generate a heatmap centered at `chr2L:480290-480320` in _Drosophila Melanogaster_ S2 cells. Here dSMF data is sourced from [Krebs et al., Mol. Cell., 2017](https://pubmed.ncbi.nlm.nih.gov/28735898/).
