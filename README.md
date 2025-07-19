@@ -41,7 +41,7 @@ SMTrackR::plotFootprints(organism = "mmusculus", model = "8cell", condition = "W
 ```
 ### Using data from Drosophila Melanogaster S2 cells
 
-Please use the command below to generate a heatmap centered at `chr2L:480290-480320` in _Drosophila Melanogaster_ S2 cells.Here dSMF data is sourced from [Krebs et al., Mol. Cell., 2017](https://pubmed.ncbi.nlm.nih.gov/28735898/).
+Please use the command below to generate a heatmap centered at `chr2L:480290-480320` in _Drosophila Melanogaster_ S2 cells. Here dSMF data is sourced from [Krebs et al., Mol. Cell., 2017](https://pubmed.ncbi.nlm.nih.gov/28735898/).
 
 ```
 library(SMTrackR)
