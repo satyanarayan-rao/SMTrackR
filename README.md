@@ -14,6 +14,7 @@ and dSMF datasets. SMTrackR exploits UCSC REST API to query a BigBed file and
 plot footprint heatmap categorized in different binding states as well as
 report their occupancies.
 
+List of tracks are available [here](https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0)
 
 ## Installation
 
