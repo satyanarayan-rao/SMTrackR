@@ -29,18 +29,21 @@ Single-molecule assays like NOMe-seq, and dSMF are superior to DNase-seq and ATA
 ```
 ## Loading the package
 ```{r, echo = T}
-library(TestSMTR)
+library(SMTrackR)
 ```
 ## Listing Available Track
 ```{r plotting, echo = TRUE}
 
-TestSMTR::listTracks()
+SMTrackR::listTracks()
 ```
 
-## Plot Single Molecules
+## Plot Single Molecules from dSMF Data
 ```{r, fig.width=4.5, fig.height=6, echo=TRUE}
-TestSMTR::plotFootprints()
+SMTrackR::plotFootprints()
 ```
+
+## Plot Single Molecules from Nanopore Data
+SMTrackR::plotMethylationCallsNanopore(bigBed = "inst/extdata/20180515_Yeast_Run-tombo_denovo_1.3.bb", chromosome = "chrIII", start = "114300", stop = "114600", label = "fig2a", span_left = 1000, span_right = 1000) 
 ## Session Info
 ```{r, echo = TRUE}
 sessionInfo()

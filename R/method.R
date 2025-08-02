@@ -860,3 +860,82 @@ listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y
 }
 
 
+
+#' Visualize aggregate methylation calls from ONT sequencing data
+#'
+#' @description Generates heatmap of methylation calls from likes of SMAC-seq datasets.
+#' currently has data from Yeast (sacCer3)
+#'
+#' @param bigBed BigBed file path (e.g., "demo.bb")
+#' @param chromosome Chromosome ID (e.g., "chr2L")
+#' @param start Genomic start position (numeric/character)
+#' @param stop Genomic end position (numeric/character)
+#' @param label Plot title annotation
+#' @param span_left Upstream window size from region (default: 150)
+#' @param span_right Downstream window size from region (default: 150)
+#' @param remove_dup Remove duplicate reads? (default: FALSE)
+#'
+#' @return Saves a methylation calls (binary) heatmap in pdf, png, and eps file formats.
+#'
+#' @details
+#' This function uses local SMF/dSMF bigBed file and plot heatmap
+#'
+#'
+#' @examples
+#' # Basic usage with default parameters
+#' plotMethylationCallsNanopore()
+#'
+#' # Custom genomic region analysis
+#' plotFootprints(
+#'   chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+#'
+#' @export
+plotMethylationCallsNanopore <- function(
+        bigBed = "inst/extdata/demo.bb",
+        chromosome = "chr2L",start = "480290", stop = "480320",
+        label = "peak229", span_left = 1000, span_right = 1000,
+        remove_dup = FALSE, stride = 5) {
+    # Function implementation
+}
+
+
+plotMethylationCallsNanopore <- function (
+        bigBed = "inst/extdata/20180515_Yeast_Run-tombo_denovo_1.3.bb",
+        chromosome = "chrIII",start = "114300", stop = "114600",
+        label = "smac_seq", span_left = 1000, span_right = 1000,
+        remove_dup = FALSE, stride = 5) {
+    query_file <- prepareQueryFile(chromosome = chromosome,
+                                   start = start, stop = stop, label = label)
+
+    overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
+                                     query_file = query_file)
+
+    write.table(overlap_df, file = paste0(label, ".intersect.bed"),
+                sep = "\t", row.names = F, col.names = F, quote = F)
+    data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df,
+                                                        span_left = span_left,
+                                                        span_right = span_right)
+    data_to_plot = data_to_plot_and_strand_map_df$out_mat
+    strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
+    pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
+    neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
+
+    center = as.integer(dim(data_to_plot)[2]/2)
+    half_width = as.integer((as.integer(stop) - as.integer(start))/(2*stride) )
+    l_index = center - half_width
+    r_index = center + half_width
+    sub_df = data_to_plot[, seq (l_index, r_index)]
+    sum_by_row = apply(sub_df, 1, sum)
+    tmp = strand_map_df
+
+    ordered_by_methylation = sum_by_row[order(sum_by_row)]
+    tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
+    ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
+    data_to_plot = data_to_plot[row.names(ordered_tmp),]
+    write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
+                 file = paste0(label, ".strand_wise_count.tsv"),
+                 sep = "\t", row.names = F, col.names = F, quote = F)
+    write.table (data_to_plot, file = paste0(label, ".nanopore_methylation.tsv"),
+                 sep = "\t", row.names = T, col.names = F, quote = FALSE)
+    savePlotNanopore(label = label)
+}
