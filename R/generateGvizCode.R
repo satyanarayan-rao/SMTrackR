@@ -145,7 +145,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
                     ", genome = '", genome_assembly, "'",
                     ", chromosome = '", chromosome, "'",
                     ", col = 'red', fill = 'transparent', start = c (",
-                    locus, ")", ", width = ", stop - start, ", name = 'RoI' )")
+                    start, ")", ", width = ", stop - start, ", name = 'RoI' )")
              , file = gviz_code_file, sep = "\n", append = TRUE)
         cat ("\n", file = gviz_code_file, sep = " ", append = TRUE)
 
