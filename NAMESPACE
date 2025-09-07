@@ -1,5 +1,7 @@
 exportPattern("^plot+")
 exportPattern("^list+")
+exportPattern("^generateGviz+")
+
 importFrom("jsonlite", "fromJSON")
 importFrom("rtracklayer", "import")
 importFrom("GenomicRanges", "resize")

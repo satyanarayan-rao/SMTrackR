@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 Single-molecule assays like NOMe-seq, and dSMF are superior to DNase-seq and ATAC-seq as they do not nibble down DNA. Thus, they enable quantification of all three i.e., protein-free, Transcription Factor-bound and histone-complex-bound states. But a user-friendly tool to visualize and quantify such states is lacking. SMTrackR, a Bioconductor package visualizes protein-DNA binding states on individual sequenced DNA molecules. SMTrackR queries the single-molecule footprint database we built and hosted at Galaxy Server. It comprises of BigBed files generated from NOMe-seq and dSMF datasets. SMTrackR exploits UCSC REST API to query a BigBed file and plot footprint heatmap categorized in different binding states as well as report their occupancies.  
+
 ## Installation
 ```{r, echo = T}
 # if (!require("BiocManager", quietly = TRUE))
@@ -28,22 +29,32 @@ Single-molecule assays like NOMe-seq, and dSMF are superior to DNase-seq and ATA
 # rmarkdown::html_vignette
 ```
 ## Loading the package
-```{r, echo = T}
+```{r Load package, echo=TRUE}
 library(SMTrackR)
 ```
 ## Listing Available Track
-```{r plotting, echo = TRUE}
+```{r List available tracks, echo = TRUE}
 
 SMTrackR::listTracks()
 ```
 
 ## Plot Single Molecules from dSMF Data
-```{r, fig.width=4.5, fig.height=6, echo=TRUE}
+
+```{r Plot dSMF data, fig.width=4.5, fig.height=6, echo=TRUE}
 SMTrackR::plotFootprints()
 ```
 
+## Plot Single Molecules from SMF Data
+
+```{r plot psuedo-bulk scNOMe-seq data, fig.width=4.5, fig.height=6, echo=TRUE}
+SMTrackR::plotFootprints(organism = "mmusculus", model = "8cell", condition = "WT", genome_assembly = "mm10", type = "SMF", chromosome = "chr5", start = "113847750",  stop  = "113847780", tr = "8cell", label = "check", fp_cap = 50, remove_dup = T)
+```
+
 ## Plot Single Molecules from Nanopore Data
-SMTrackR::plotMethylationCallsNanopore(bigBed = "inst/extdata/20180515_Yeast_Run-tombo_denovo_1.3.bb", chromosome = "chrIII", start = "114300", stop = "114600", label = "fig2a", span_left = 1000, span_right = 1000) 
+
+```{r, fig.width=10, fig.height=5, echo=TRUE}
+#SMTrackR::plotMethylationCallsNanopore() 
+```
 ## Session Info
 ```{r, echo = TRUE}
 sessionInfo()

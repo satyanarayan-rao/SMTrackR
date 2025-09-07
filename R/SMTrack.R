@@ -55,6 +55,35 @@ JSON_to_Bed <- function (json_file = "peak229.json", label = "peak229", tr = "fp
     return (output_file_name)
 }
 
+JSON_to_Bed_for_Nanopore <- function (json_file = "smac_seq.json",
+                                      label = "smac_seq",
+                                      tr = "nanopore_meth_calls") {
+    x <- fromJSON(json_file)
+    flat_names <- names (x[[tr]])
+    df_of_json = as.data.frame(x[[tr]], col.names = flat_names)
+
+    output_file = file (paste0(label, ".methylation_calls.bed"), "w")
+    output_file_name = paste0(label, ".methylation_calls.bed")
+    for (meth_call in seq_len(nrow(df_of_json))) {
+        chrom <- df_of_json$chrom[meth_call]
+        st <- df_of_json$chromStart[meth_call]
+        en <- df_of_json$chromEnd[meth_call]
+        read_id <- df_of_json$name[meth_call]
+        score <- df_of_json$score[meth_call]
+        strand <- df_of_json$strand[meth_call]
+        m_vec <- df_of_json$field8[meth_call]
+
+        cat(paste(chrom, st, en, paste(read_id, m_vec, sep = "|"),
+                  score, strand, sep = "\t"),
+            file = output_file, append = TRUE)
+        cat ("\n", file  = output_file, append = TRUE)
+    }
+    close(output_file)
+    return (output_file_name)
+}
+
+
+
 intersectQueryandSubject <- function(query_file = "peak229.bed",
                                      subject_file = "peak229.all_fp.bed",
                                      overlap = "peak229_overlap.bed") {

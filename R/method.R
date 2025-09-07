@@ -624,14 +624,14 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
 #'
 #' # Custom genomic region analysis
 #' plotFootprints(
-#'   chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+#'   chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 #'
 #' @export
 plotFootprints <- function(
         organism = "dmelanogaster", model = "S2",
         condition = "WT", genome_assembly = "dm6",
         type = "dSMF", chromosome = "chr2L",
-        start = "480290", stop = "480320",
+        start = 480290, stop = 480320,
         tr = "fp_and_mvec", label = "peak229",
         span_left = 150, span_right = 150, remove_dup = FALSE,
         fp_cap = 50) {
@@ -642,7 +642,7 @@ plotFootprints <- function(
 plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                             condition = "WT", genome_assembly = "dm6",
                             type = "dSMF", chromosome = "chr2L",
-                            start = "480290", stop = "480320",
+                            start = 480290, stop = 480320,
                             tr = "fp_and_mvec", label = "peak229",
                             span_left = 150, span_right = 150,
                             remove_dup = FALSE, fp_cap = 50){
@@ -746,12 +746,12 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
 #'
 #' # Custom genomic region analysis
 #' plotFootprints(
-#'   chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+#'   chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 #'
 #' @export
 plotFootprintsUsingLocalBigBed <- function(
         bigBed = "inst/extdata/demo.bb",
-        chromosome = "chr2L",start = "480290", stop = "480320",
+        chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
         remove_dup = FALSE,fp_cap = 50) {
     # Function implementation
@@ -760,7 +760,7 @@ plotFootprintsUsingLocalBigBed <- function(
 
 plotFootprintsUsingLocalBigBed <- function (
         bigBed = "inst/extdata/demo.bb",
-        chromosome = "chr2L",start = "480290", stop = "480320",
+        chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
         remove_dup = FALSE,fp_cap = 50) {
     query_file <- prepareQueryFile(chromosome = chromosome,
@@ -859,6 +859,124 @@ listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y
     print(sheet_data)
 }
 
+############################## Nanopore ########################################
+
+
+#' Visualize Single Molecule Footprint Patterns
+#'
+#' @description Generates footprint plots from NOME-seq data within specified genomic regions.
+#' Designed for Drosophila melanogaster analysis with expandable parameters for other organisms.
+#'
+#' @param organism Organism code (default: "scerevisiae")
+#' @param model Biological model/system (default: "BY4741 strain")
+#' @param condition Experimental condition (default: "WT")
+#' @param genome_assembly Genome version (default: "sacCer3")
+#' @param type Data type ("Nanopore" = dual enzyme Single Molecule Footprinting)
+#' @param chromosome Chromosome ID (e.g., "chrIII")
+#' @param start Genomic start position (numeric/character)
+#' @param stop Genomic end position (numeric/character)
+#' @param tr Track name for BigBed file resource (default: "nanopore_meth_calls")
+#' @param label Plot title annotation (default: "smac_seq")
+#' @param span_left Upstream window size from region (default: 1000)
+#' @param span_right Downstream window size from region (default: 1000)
+#' @param stride sliding window used for singal aggregation 
+#'
+#' @return Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file
+#'
+#' @details
+#' This function retrieves and visualizes DNA accessibility patterns from single-molecule data:
+#' - Integrates with UCSC-style track hubs via `tr` parameter
+#' - Automatically handles coordinate conversion for dm6 genome
+#' - Implements dynamic y-axis scaling using `fp_cap`
+#'
+#' @examples
+#' # Basic usage with default parameters
+#' plotMethylationCallsNanopore()
+#'
+#' # Custom genomic region analysis
+#' plotFootprints(
+#'   chromosome = "chrIII", start = 114300, stop = 114600, label = "smac_seq")
+#'
+#' @export
+plotMethylationCallsNanopore <- function(
+        organism = "scerevisiae", model = "BY4741 strain",
+        condition = "WT", genome_assembly = "sacCer3",
+        type = "SMF", chromosome = "chrIII",
+        start = 114300, stop = 114600,
+        tr = "nanopore_meth_calls", label = "smac_seq",
+        span_left = 1000, span_right = 1000, stride = 5) {
+    # Function implementation
+}
+
+
+plotMethylationCallsNanopore <- function(
+        organism = "scerevisiae", model = "BY4741 strain",
+        condition = "WT", genome_assembly = "sacCer3",
+        type = "SMF", chromosome = "chrIII",
+        start = 114300, stop = 114600,
+        tr = "nanopore_meth_calls", label = "smac_seq",
+        span_left = 1000, span_right = 1000, stride = 5) {
+
+    track_url <- getHubURL(organism = organism, model = model,
+                           condition = condition, type = type,
+                           genome_assembly = genome_assembly, tr = tr)
+    #print(track_url)
+    json_file <- downloadJson(track_url = track_url, chromosome = chromosome,
+                              assembly = genome_assembly, st = start,
+                              en = stop, label = label, tr = tr)
+    subject_file <- JSON_to_Bed_for_Nanopore(json_file = json_file,
+                                             label = label, tr = tr)
+    query_file <- prepareQueryFile(chromosome = chromosome,
+                                   start = start, stop = stop, label = label)
+
+    overlap_df <- intersectQueryandSubject(query_file = query_file,
+                                           subject_file = subject_file)
+
+    overlap_df_for_plot = overlap_df[, c(1, 2, 3,4,5,6,7,8)]
+    read_id <- unlist (lapply(overlap_df$name,
+                                   function (x) {
+                                       yt = unlist(strsplit(x, split = "\\|")
+                                       )[1] }))
+    methylation_call <- unlist (lapply(overlap_df$name,
+                             function (x) {
+                                 yt = unlist(strsplit(x, split = "\\|")
+                                 )[2] }))
+    overlap_df_for_plot$name = read_id
+    overlap_df_for_plot$score = overlap_df$score
+    overlap_df_for_plot$methylation_call = methylation_call
+
+    write.table(overlap_df_for_plot, file = paste0(label, ".intersect.bed"),
+                sep = "\t", row.names = F, col.names = F, quote = F)
+    data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df_for_plot,
+                                                        span_left = span_left,
+                                                        span_right = span_right)
+    data_to_plot = data_to_plot_and_strand_map_df$out_mat
+    strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
+    pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
+    neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
+
+    center = as.integer(dim(data_to_plot)[2]/2)
+    half_width = as.integer((as.integer(stop) - as.integer(start))/(2*stride) )
+    l_index = center - half_width
+    r_index = center + half_width
+    sub_df = data_to_plot[, seq (l_index, r_index)]
+    sum_by_row = apply(sub_df, 1, sum)
+    tmp = strand_map_df
+
+    ordered_by_methylation = sum_by_row[order(sum_by_row)]
+    tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
+    ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
+    data_to_plot = data_to_plot[row.names(ordered_tmp),]
+    write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
+                 file = paste0(label, ".strand_wise_count.tsv"),
+                 sep = "\t", row.names = F, col.names = F, quote = F)
+    write.table (data_to_plot, file = paste0(label, ".nanopore_methylation.tsv"),
+                 sep = "\t", row.names = T, col.names = F, quote = FALSE)
+    savePlotNanopore(label = label)
+}
+
+
+
 
 
 #' Visualize aggregate methylation calls from ONT sequencing data
@@ -887,21 +1005,21 @@ listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y
 #'
 #' # Custom genomic region analysis
 #' plotFootprints(
-#'   chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+#'   chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 #'
 #' @export
-plotMethylationCallsNanopore <- function(
+plotMethylationCallsNanoporeUsingLocalBigBed <- function(
         bigBed = "inst/extdata/demo.bb",
-        chromosome = "chr2L",start = "480290", stop = "480320",
+        chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 1000, span_right = 1000,
         remove_dup = FALSE, stride = 5) {
     # Function implementation
 }
 
 
-plotMethylationCallsNanopore <- function (
+plotMethylationCallsNanoporeUsingLocalBigBed <- function (
         bigBed = "inst/extdata/20180515_Yeast_Run-tombo_denovo_1.3.bb",
-        chromosome = "chrIII",start = "114300", stop = "114600",
+        chromosome = "chrIII",start = 114300, stop = 114600,
         label = "smac_seq", span_left = 1000, span_right = 1000,
         remove_dup = FALSE, stride = 5) {
     query_file <- prepareQueryFile(chromosome = chromosome,
