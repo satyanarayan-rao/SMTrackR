@@ -1,6 +1,6 @@
 generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
-        condition = "WT", genome_assembly = "mm10",
-        type = "dSMF", chromosome = "chr17",
+        condition = "WT", genome_assembly = "dm6",
+        type = "dSMF", chromosome = "chr2L",
         start = 480290, stop = 480320,
         tr = "fp_and_mvec", label = "peak229",
         span_left = 150, span_right = 150, remove_dup = FALSE,
