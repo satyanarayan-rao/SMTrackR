@@ -45,7 +45,7 @@ directory which will have `remove_dup_true.plot.pdf`.
 The `png` version of the plot is shown here. 
 
 
-<img src="./plots/remove_dup_true.plot.png" alt="remove_dup" width="200">
+<img src="./plots/remove_dup_true.plot.png" alt="remove_dup" width="400">
 
 
 ### Using data from Drosophila Melanogaster S2 cells
@@ -59,7 +59,7 @@ SMTrackR::plotFootprints()
 
 The above command will generate `peak229.plot.pdf`. The `png` version is shown below. 
 
-<img src="./plots/peak229.plot.png" alt="peak229" width="200">
+<img src="./plots/peak229.plot.png" alt="peak229" width="400">
 
 
 ### Using SMAC-seq data from Yeast
@@ -71,7 +71,7 @@ SMTrackR::plotMethylationCallsNanopore()
 
 The png version of the plot is shown below. 
 
-<img src="./plots/smac_seq.plot.png" alt="nanopore" width="300">
+<img src="./plots/smac_seq.plot.png" alt="nanopore" width="500">
 
 ## Visualizing on gene tracks
 
