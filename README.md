@@ -71,7 +71,7 @@ SMTrackR::plotMethylationCallsNanopore()
 
 The png version of the plot is shown below. 
 
-<img src="./plots/smac_seq.plot.png" alt="nanopore" width="500">
+<img src="./plots/smac_seq.plot.png" alt="nanopore" width="600">
 
 ## Visualizing on gene tracks
 
