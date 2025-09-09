@@ -28,7 +28,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         genome = paste0("genome = ", '"', genome_assembly, '"')
 
 
-        cat (paste0("locus = ", start),
+        cat (paste0("locus = ", as.integer((start + stop)/2)),
              file = gviz_code_file, sep = "\n", append = TRUE)
         cat (paste0("start = ", start),
              file = gviz_code_file, sep = "\n", append = TRUE)
@@ -78,7 +78,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         cat ("axisTrack <- GenomeAxisTrack()",
              file = gviz_code_file, sep = "\n", append = TRUE)
 
-        cat ("bstarts <- seq (start - span_left - 10, start + span_right, by = 1)
+        cat ("bstarts <- seq (locus - span_left - 10, locus + span_right, by = 1)
         bends <- bstarts + 1
         gr = GRanges(seqnames = chrom,
                      ranges = IRanges(start = bstarts, end = bends + 10),
