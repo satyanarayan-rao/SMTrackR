@@ -87,3 +87,8 @@ SMTrackR::generateGvizCodeforSMF(organism = "mmusculus", model = "16cell", condi
                          start = 191718250,  stop  = 191718280, tr = "16cell",
                          label = "tss", fp_cap = 50, remove_dup = F, gviz_left = 500, gviz_right = 500)
 ```
+
+The png version of `plots/tss.gviz.pdf` is shown below. 
+
+<img src="./plots/tss.gviz.png" alt="nanopore" width="600">
+

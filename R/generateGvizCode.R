@@ -82,11 +82,11 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         cat ("axisTrack <- GenomeAxisTrack()",
              file = gviz_code_file, sep = "\n", append = TRUE)
 
-        cat ("bstarts <- seq (locus - span_left - 10, locus + span_right, by = 1)
+        cat ("bstarts <- seq (locus - span_left - 20, locus + span_right, by = 1)
         bends <- bstarts + 1
         gr = GRanges(seqnames = chrom,
-                     ranges = IRanges(start = bstarts, end = bends + 10),
-                     score = rep (-1, 311))
+                     ranges = IRanges(start = bstarts, end = bends),
+                     score = rep (-1, 321))
         red_line <- DataTrack(
             range = gr,
             type = 'heatmap',        # heatmap mode
@@ -115,7 +115,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
             cat (paste0("df_to_list[[", "'", state_label,"'", "]] = ",
             "lapply(seq(", prev, ",", current, "), ", "function(x) {
         gr = GRanges(seqnames = chrom,
-                     ranges = IRanges(start = starts + 10, end = ends + 10),
+                     ranges = IRanges(start = starts, end = ends),
                      score = unname(real_data[x,]))
         heatmapTrack <- DataTrack(
             range = gr,
