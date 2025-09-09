@@ -712,7 +712,12 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
     writeIntermediateFiles(ordered_by_length = ordered_by_length,
                            label = label)
 
-    savePlotSMForDSMF(label = label, span_left = span_left, span_right = span_right)
+    plot_title = paste0(organism, " ", model, " ", condition)
+    x_label = paste0(label, " (", genome_assembly, " ", 
+                        chromosome, ":", start, "-", stop, ")")
+    savePlotSMForDSMF(label = label, span_left = span_left, 
+                      span_right = span_right, plot_title = plot_title,
+                      x_label = x_label)
     #removing the intermediate files:
     deleteIntermediates(label = label)
 
@@ -812,7 +817,11 @@ plotFootprintsUsingLocalBigBed <- function (
     writeIntermediateFiles(ordered_by_length = ordered_by_length,
                            label = label)
 
-    savePlotSMForDSMF(label = label, span_left = span_left, span_right = span_right)
+    plot_title = paste0(organism, " ", model, " ", condition)
+    x_label = paste0(label, " (", genome_assembly, " ", 
+                        chromosome, ":", start, "-", stop, ")")
+    savePlotSMForDSMF(label = label, span_left = span_left, 
+                      span_right = span_right, plot_title = plot_title)
     #removing the intermediate files:
     deleteIntermediates(label = label)
 }
@@ -972,7 +981,10 @@ plotMethylationCallsNanopore <- function(
                  sep = "\t", row.names = F, col.names = F, quote = F)
     write.table (data_to_plot, file = paste0(label, ".nanopore_methylation.tsv"),
                  sep = "\t", row.names = T, col.names = F, quote = FALSE)
-    savePlotNanopore(label = label)
+    plot_title = paste0(organism, " ", model, " ", condition)
+    x_label = paste0(label, " (", genome_assembly, " ", 
+                        chromosome, ":", start, "-", stop, ")")
+    savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label)
 }
 
 

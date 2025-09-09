@@ -1,5 +1,7 @@
 savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
-                              span_right = 1000, stride = 5){
+                              span_right = 1000, stride = 5, 
+                              plot_title = "scerevisiae BY4741 strain",
+                              x_label = "smac_seq (sacCer3 chrIII:114300-114600)"){
     data_to_plot = read.table (paste0(label, ".nanopore_methylation.tsv"),
                                sep = "\t", header = F, stringsAsFactors = F,
                                row.names = 1)
@@ -31,9 +33,9 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
               axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
                                         "1"  = "Red" , "2" = "#C7E9C0"),
-              xlim = c(-30, x_width), xlab = paste0("           ", label),
+              xlim = c(-30, x_width), xlab = paste0("           ", x_label),
               ylab = "", main = paste0("      ",
-                                       "Yeast chrIII:114300-114600"))
+                                       plot_title))
 
 
         # Draw vertical red line +/- 15 bases from `0`

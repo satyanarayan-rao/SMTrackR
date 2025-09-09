@@ -1,5 +1,7 @@
 savePlotSMForDSMF <- function (label = "peak229",
-                           span_left = 150, span_right = 150){
+                           span_left = 150, span_right = 150, 
+                           plot_title = "dmelanogaster S2 WT",
+                           x_label = "peak229 (dm6 chr2L:480290-480320)"){
     dat_for_plot <- read.table(paste0(label, ".num.fp.tsv"),
                                sep = "\t", header = FALSE,
                                stringsAsFactors = FALSE,
@@ -53,7 +55,8 @@ savePlotSMForDSMF <- function (label = "peak229",
         image(1:ncol(jj), 1:nrow(jj), t(jj),  axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
                                         "1"  = "Red" , "2" = "#2b8cbe"),
-              xlim = c(-30, x_width), xlab = label, ylab = "")
+              xlim = c(-30, x_width), xlab = paste0("           ", x_label), 
+              ylab = "", main = paste0("      ", plot_title))
 
 
         counter <- 1
