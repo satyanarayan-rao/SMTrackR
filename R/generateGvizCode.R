@@ -32,6 +32,10 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
              file = gviz_code_file, sep = "\n", append = TRUE)
         cat (paste0("start = ", start),
              file = gviz_code_file, sep = "\n", append = TRUE)
+        cat (paste0("gviz_left = ", gviz_left),
+             file = gviz_code_file, sep = "\n", append = TRUE)
+        cat (paste0("gviz_right = ", gviz_right),
+             file = gviz_code_file, sep = "\n", append = TRUE)
         cat (paste0("span_left = ", span_left),
              file = gviz_code_file, sep = "\n", append = TRUE)
         cat (paste0("span_right = ", span_right),
@@ -158,8 +162,8 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
 
         cat (paste0("plotTracks(c(itrack, hl_tracks)",
             ", chromosome = chrom,
-            from = locus - 500,  # zoom start
-            to = locus + 1000,    # zoom end
+            from = locus - gviz_left,  # zoom start
+            to = locus + gviz_right,    # zoom end
             background.title = 'white',
             showColorBar = F,
             showAxis = F, showLabel = F,
@@ -170,7 +174,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
              file = gviz_code_file, sep = "\n", append = TRUE)
         cat (paste0("A R code file ", gviz_code_file, 
                     " is written. Please run the command: Rscript ",
-                    gviz_code_file, " to place the heatmap on gene track!"))
+                    gviz_code_file, " to place the heatmap on gene track!\n"))
 
     }else{
         cat (paste0("Both files", fp_file, " ", occ_file, " ", "must exist to generate the code\n"))

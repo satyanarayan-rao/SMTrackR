@@ -44,7 +44,8 @@ directory which will have `remove_dup_true.plot.pdf`.
 
 The `png` version of the plot is shown here. 
 
-![mouse_smf](./plots/remove_dup_true.plot.png)
+
+<img src="./plots/remove_dup_true.plot.png" alt="remove_dup" width="200">
 
 
 ### Using data from Drosophila Melanogaster S2 cells
@@ -58,7 +59,7 @@ SMTrackR::plotFootprints()
 
 The above command will generate `peak229.plot.pdf`. The `png` version is shown below. 
 
-![peak229](./plots/peak229.plot.png)
+<img src="./plots/peak229.plot.png" alt="peak229" width="200">
 
 
 ### Using SMAC-seq data from Yeast
@@ -70,4 +71,19 @@ SMTrackR::plotMethylationCallsNanopore()
 
 The png version of the plot is shown below. 
 
-![nanopore](./plots/smac_seq.plot.png)
+<img src="./plots/smac_seq.plot.png" alt="nanopore" width="300">
+
+## Visualizing on gene tracks
+
+Because `Gviz` is a heavy package, we have not made ours to depend on this, but we generate a code that renders the heatmap below the gene track. Users are of course free to change the zoom level and add other tracks of their need. The generated code renders ideogram, axis, gene tracks and the heatmap highlight the center. It requires that you run the **`plotFootprint` function first**, so that it can use the heatmap data. Please look at the code below.
+
+```
+SMTrackR::plotFootprints(organism = "mmusculus", model = "16cell", condition = "WT",
+                         genome_assembly = "mm10", type = "SMF", chromosome = "chr1",
+                         start = 191718250,  stop  = 191718280, tr = "16cell",
+                         label = "tss", fp_cap = 50, remove_dup = F)
+SMTrackR::generateGvizCodeforSMF(organism = "mmusculus", model = "16cell", condition = "WT",
+                         genome_assembly = "mm10", type = "SMF", chromosome = "chr1",
+                         start = 191718250,  stop  = 191718280, tr = "16cell",
+                         label = "tss", fp_cap = 50, remove_dup = F, gviz_left = 500, gviz_right = 500)
+```
