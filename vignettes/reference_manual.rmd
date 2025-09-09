@@ -52,7 +52,7 @@ SMTrackR::generateGvizCodeforSMF(organism = "mmusculus", model = "8cell", condit
 
 ## Plot Single Molecules from dSMF Data
 
-To learn more about dSMF data, please read the article Krebs et al., Mol. Cell., 2017](https://pubmed.ncbi.nlm.nih.gov/28735898/). Briefly, it uses two exogenous methyltransferases in tandem to map protein-DNA binding on individual sequenced DNA molecules.
+To learn more about dSMF data, please read the article [Krebs et al., Mol. Cell., 2017](https://pubmed.ncbi.nlm.nih.gov/28735898/). Briefly, it uses two exogenous methyltransferases in tandem to map protein-DNA binding on individual sequenced DNA molecules.
 
 The command below will generate `plots/peak229.plot.pdf` file.
 ```{r Plot dSMF data, fig.width=4.5, fig.height=6, echo=TRUE}
@@ -70,10 +70,10 @@ SMTrackR::plotMethylationCallsNanopore()
 
 ## Listing Available Track
 
-All uptodate available tracks can be listed using the following command. 
+All uptodate tracks are available [here](https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0) and can be listed using the following command.  
 ```{r List available tracks, echo = TRUE}
 
-SMTrackR::listTracks()
+# SMTrackR::listTracks()
 ```
 
 
