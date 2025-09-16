@@ -79,6 +79,9 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         dev.off()
         dev.off()
         dev.off()
+        cat (paste0("Heatmap is saved in the file ", 
+                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+        cat ("\n")
 
     }else {
 
@@ -101,6 +104,9 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         dev.off()
         dev.off()
         dev.off()
+        cat (paste0("Heatmap is saved in the file ", 
+                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+        cat ("\n")
 
     }
 

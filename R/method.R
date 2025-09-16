@@ -770,6 +770,7 @@ plotFootprintsUsingLocalBigBed <- function (
         remove_dup = FALSE,fp_cap = 50) {
     query_file <- prepareQueryFile(chromosome = chromosome,
                                    start = start, stop = stop, label = label)
+    bigBed = system.file(bigBed)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)
@@ -1036,6 +1037,7 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
         remove_dup = FALSE, stride = 5) {
     query_file <- prepareQueryFile(chromosome = chromosome,
                                    start = start, stop = stop, label = label)
+    bigBed = system.file(bigBed)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)

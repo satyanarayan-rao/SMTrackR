@@ -12,11 +12,11 @@ savePlotSMForDSMF <- function (label = "peak229",
 
     dat_for_plot <- apply(dat_for_plot, 2, rev)
 
-    main_dir <- file.path("./", "plots/")
+    main_dir <- file.path("./", "plots")
     if (!dir.exists(main_dir)){
         dir.create(main_dir, recursive = TRUE)
     }
-    plot_dir <- file.path("plots/")
+    plot_dir <- file.path("plots")
     if (!dir.exists(plot_dir)){
         dir.create(plot_dir, recursive = TRUE)
     }
@@ -113,6 +113,9 @@ savePlotSMForDSMF <- function (label = "peak229",
         dev.off()
         dev.off()
         dev.off()
+        cat (paste0("Heatmap is saved in the file ", 
+                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+        cat ("\n")
         
     }else {
 
@@ -135,6 +138,9 @@ savePlotSMForDSMF <- function (label = "peak229",
         dev.off()
         dev.off()
         dev.off()
+        cat (paste0("Heatmap is saved in the file ", 
+                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+        cat ("\n")
         
     }
 
