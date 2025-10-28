@@ -13,7 +13,7 @@ importFrom("stringr", "str_sub")
 importFrom("stringr", "str_locate_all")
 importFrom("stringr", "str_count")
 importFrom("stringr", "str_replace_all")
-importFrom("gsheet", "gsheet2tbl")
+#importFrom("gsheet", "gsheet2tbl")
 importFrom("grDevices", "dev.copy", "dev.off", "pdf", "png",
            "postscript")
 importFrom("graphics", "axis", "box", "image", "par", "segments",

@@ -548,7 +548,7 @@ label_list <- list ("Naked_DNA" = 0, "TF" = 1,
 getHubURL <- function (organism = "dmelanogaster",
                        model = "S2", condition = "WT", type = "dSMF",
                        genome_assembly = "dm6", tr = "fp_and_mvec"){
-    hubs <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0")
+    #hubs <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0")
     row.names (hubs) <- paste(hubs$Organism, hubs$model,
                               hubs$Condition, hubs$Type,
                               hubs$Genome, hubs$Track, sep = "@")
