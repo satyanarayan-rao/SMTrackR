@@ -548,7 +548,6 @@ label_list <- list ("Naked_DNA" = 0, "TF" = 1,
 getHubURL <- function (organism = "dmelanogaster",
                        model = "S2", condition = "WT", type = "dSMF",
                        genome_assembly = "dm6", tr = "fp_and_mvec"){
-    #hubs <- gsheet2tbl("https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0")
     row.names (hubs) <- paste(hubs$Organism, hubs$model,
                               hubs$Condition, hubs$Type,
                               hubs$Genome, hubs$Track, sep = "@")
@@ -730,6 +729,10 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
 #' Designed for Drosophila melanogaster analysis with expandable parameters for other organisms.
 #'
 #' @param bigBed BigBed file path (e.g., "demo.bb")
+#' @param organism Organism code (default: "dmelanogaster")
+#' @param model Biological model/system (default: "S2" cells)
+#' @param condition Experimental condition (default: "WT")
+#' @param genome_assembly Genome version (default: "dm6")
 #' @param chromosome Chromosome ID (e.g., "chr2L")
 #' @param start Genomic start position (numeric/character)
 #' @param stop Genomic end position (numeric/character)
@@ -750,12 +753,15 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
 #' plotFootprintsUsingLocalBigBed()
 #'
 #' # Custom genomic region analysis
-#' plotFootprints(
+#' plotFootprintsUsingLocalBigBed(
+#'   bigBed = "inst/extdata/demo.bb", organism = "dmelanogaster",
+#'   model = "S2", condition = "WT", genome_assembly = "dm3",
 #'   chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 #'
 #' @export
 plotFootprintsUsingLocalBigBed <- function(
-        bigBed = "inst/extdata/demo.bb",
+        bigBed = "inst/extdata/demo.bb", organism = "dmelanogaster", 
+        model = "S2", condition = "WT", genome_assembly = "dm3",
         chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
         remove_dup = FALSE,fp_cap = 50) {
@@ -764,13 +770,20 @@ plotFootprintsUsingLocalBigBed <- function(
 
 
 plotFootprintsUsingLocalBigBed <- function (
-        bigBed = "inst/extdata/demo.bb",
+        bigBed = "", organism = "dmelanogaster",
+        model = "S2", condition = "WT", genome_assembly = "dm3",
         chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
         remove_dup = FALSE,fp_cap = 50) {
+    if (bigBed == "") {
+        cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
+        return ("bigBed file path")
+    }else if (!file.exists(bigBed)){
+        cat ("bigBed file path requied\n")
+        return ("bigBed file path")
+    }
     query_file <- prepareQueryFile(chromosome = chromosome,
                                    start = start, stop = stop, label = label)
-    bigBed = system.file(bigBed)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)
@@ -834,8 +847,6 @@ plotFootprintsUsingLocalBigBed <- function (
 #' @description Retrieves track metadata from a centralized Google Sheet containing
 #' organism-specific single-molecule datasets and experimental conditions.
 #'
-#' @param sheet_url URL for Google Sheet containing track metadata
-#' (default: package-maintained spreadsheet)
 #'
 #' @return A tibble containing track metadata with columns:
 #' \itemize{
@@ -857,16 +868,14 @@ plotFootprintsUsingLocalBigBed <- function (
 #' `plotFootprints()`: Use track names from this list to visualize specific datasets
 #'
 #' @export
-listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit#gid=0") {
-    sheet_data <- gsheet::gsheet2tbl(sheet_url)
-    print(sheet_data)
+listTracks <- function() {
+    print(hubs)
 }
 
 
-listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0") {
+listTracks <- function(){
 
-    sheet_data <- gsheet::gsheet2tbl(sheet_url)
-    print(sheet_data)
+    print(hubs)
 }
 
 ############################## Nanopore ########################################
@@ -904,9 +913,16 @@ listTracks <- function(sheet_url = "https://docs.google.com/spreadsheets/d/1eu2Y
 #' plotMethylationCallsNanopore()
 #'
 #' # Custom genomic region analysis
-#' plotFootprints(
-#'   chromosome = "chrIII", start = 114300, stop = 114600, label = "smac_seq")
 #'
+#' plotMethylationCallsNanopore (
+#'         organism = "scerevisiae", model = "BY4741 strain",
+#'         condition = "WT", genome_assembly = "sacCer3",
+#'         type = "SMF", chromosome = "chrIII",
+#'         start = 114300, stop = 114600,
+#'         tr = "nanopore_meth_calls", label = "smac_seq",
+#'         span_left = 1000, span_right = 1000, stride = 5)
+
+
 #' @export
 plotMethylationCallsNanopore <- function(
         organism = "scerevisiae", model = "BY4741 strain",
@@ -1005,6 +1021,7 @@ plotMethylationCallsNanopore <- function(
 #' @param span_left Upstream window size from region (default: 150)
 #' @param span_right Downstream window size from region (default: 150)
 #' @param remove_dup Remove duplicate reads? (default: FALSE)
+#' @param stride a window size used for averaging the methylation call values
 #'
 #' @return Saves a methylation calls (binary) heatmap in pdf, png, and eps file formats.
 #'
@@ -1012,32 +1029,33 @@ plotMethylationCallsNanopore <- function(
 #' This function uses local SMF/dSMF bigBed file and plot heatmap
 #'
 #'
-#' @examples
-#' # Basic usage with default parameters
-#' plotMethylationCallsNanopore()
-#'
-#' # Custom genomic region analysis
-#' plotFootprints(
-#'   chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 #'
 #' @export
 plotMethylationCallsNanoporeUsingLocalBigBed <- function(
-        bigBed = "inst/extdata/demo.bb",
-        chromosome = "chr2L",start = 480290, stop = 480320,
-        label = "peak229", span_left = 1000, span_right = 1000,
+        bigBed = "", 
+        chromosome = "chrIII",start = 114300, stop = 114600,
+        label = "smac_seq", span_left = 1000, span_right = 1000,
         remove_dup = FALSE, stride = 5) {
     # Function implementation
 }
 
 
 plotMethylationCallsNanoporeUsingLocalBigBed <- function (
-        bigBed = "inst/extdata/20180515_Yeast_Run-tombo_denovo_1.3.bb",
+        bigBed = "",
         chromosome = "chrIII",start = 114300, stop = 114600,
         label = "smac_seq", span_left = 1000, span_right = 1000,
         remove_dup = FALSE, stride = 5) {
+
+    if (bigBed == "") {
+        cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
+        return ("bigBed file path")
+    }else if (!file.exists(bigBed)){
+        cat ("bigBed file path requied\n")
+        return ("bigBed file path")
+    }
+
     query_file <- prepareQueryFile(chromosome = chromosome,
                                    start = start, stop = stop, label = label)
-    bigBed = system.file(bigBed)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)

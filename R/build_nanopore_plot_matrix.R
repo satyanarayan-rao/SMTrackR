@@ -5,7 +5,6 @@ generatePlotMatrix <- function (methylation_call_df, span_left = 1000,
     roi_start = methylation_call_df[1, 2]
     roi_end = methylation_call_df[1, 3]
     total_columns = (span_left + span_right + (roi_end - roi_start))/stride + 1
-    print (total_columns)
     out_mat = matrix (0L, nrow = 0, ncol = total_columns)
     read_name_vec = c ()
     strand_map_df = data.frame("strand" = c())

@@ -23,7 +23,7 @@ Authors@R:
      )
 Description: Uses Bisulfite converted reads to infer protein-DNA binding.
 biocViews: NucleosomePositioning, Visualization
-Imports: jsonlite, GenomicRanges, rtracklayer, stringr, gsheet 
+Imports: jsonlite, GenomicRanges, rtracklayer, stringr
 License: MIT + file LICENSE
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

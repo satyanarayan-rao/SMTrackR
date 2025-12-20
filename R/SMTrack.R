@@ -1,9 +1,3 @@
-#hubs = read.table("hubs.tsv", sep = "\t", header = T,
-#                  stringsAsFactors = F, check.names = F)
-#hubs = gsheet2tbl("https://docs.google.com/spreadsheets/d/1jyM4LhhrCPKtrnj81MDizc33Za1yvar80-HWC47kyfQ/edit?gid=1076362671#gid=1076362671")
-#row.names (hubs) = paste(hubs$Organism, hubs$model,
-#                         hubs$Condition, hubs$Type, hubs$Genome, sep = "@")
-
 retrieve_json <- function (track_url = "", assembly = "dm6",
                            chromosome = "chr2L", st = "480290",
                            en = "480320", label = "peak229",
@@ -116,7 +110,7 @@ prepareQueryFile <- function (chromosome = "chr2L",
 }
 
 overlapUsingBigBed <- function (
-        bigbed_file = "local_bigbed/demo.bb",
+        bigbed_file = "inst/extdata/demo.bb",
         query_file = "peak229.bed"){
     q_obj <- import (query_file)
     s_obj <- import(bigbed_file, which = q_obj)
@@ -131,7 +125,6 @@ overlapUsingBigBed <- function (
                               width (s_obj[overlaps@to, ]) + 1, fix = "end")
     s_df <- as.data.frame(s_obj_to_write)
     result_df <- cbind (sub_q_df, s_df)
-    print (head (result_df))
     return (result_df)
 
 }

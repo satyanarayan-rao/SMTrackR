@@ -91,7 +91,7 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         par(mgp=c(1.5,0.25,0), cex = 0.75)
         plot(c(0, 1), c(0, 1), ann = FALSE, bty = 'n', type = 'n',
              xaxt = 'n', yaxt = 'n');
-        text(x = 0.5, y = 0.5, paste0("Only ", nrow (jj),
+        text(x = 0.5, y = 0.5, paste0("Only ", nrow (data_to_plot),
                                       " molecules, not enough for plotting"))
 
         dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),

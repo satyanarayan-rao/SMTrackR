@@ -13,9 +13,9 @@ importFrom("stringr", "str_sub")
 importFrom("stringr", "str_locate_all")
 importFrom("stringr", "str_count")
 importFrom("stringr", "str_replace_all")
-#importFrom("gsheet", "gsheet2tbl")
 importFrom("grDevices", "dev.copy", "dev.off", "pdf", "png",
-           "postscript")
+           "postscript", "dev.control")
+importFrom("utils", "head")
 importFrom("graphics", "axis", "box", "image", "par", "segments",
            "text")
 importFrom("utils", "download.file", "read.table", "write.table")

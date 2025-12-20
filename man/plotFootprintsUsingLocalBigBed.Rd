@@ -5,10 +5,14 @@
 \title{Visualize Single Molecule Footprint Patterns using Local BigBed file}
 \usage{
 plotFootprintsUsingLocalBigBed(
-  bigBed = "inst/extdata/demo.bb",
+  bigBed = "",
+  organism = "dmelanogaster",
+  model = "S2",
+  condition = "WT",
+  genome_assembly = "dm3",
   chromosome = "chr2L",
-  start = "480290",
-  stop = "480320",
+  start = 480290,
+  stop = 480320,
   label = "peak229",
   span_left = 150,
   span_right = 150,
@@ -18,6 +22,14 @@ plotFootprintsUsingLocalBigBed(
 }
 \arguments{
 \item{bigBed}{BigBed file path (e.g., "demo.bb")}
+
+\item{organism}{Organism code (default: "dmelanogaster")}
+
+\item{model}{Biological model/system (default: "S2" cells)}
+
+\item{condition}{Experimental condition (default: "WT")}
+
+\item{genome_assembly}{Genome version (default: "dm6")}
 
 \item{chromosome}{Chromosome ID (e.g., "chr2L")}
 
@@ -50,7 +62,9 @@ This function uses local SMF/dSMF bigBed file and plot heatmap
 plotFootprintsUsingLocalBigBed()
 
 # Custom genomic region analysis
-plotFootprints(
-  chromosome = "chr2L", start = "480290", stop = "480320", label = "peak229")
+plotFootprintsUsingLocalBigBed(
+  bigBed = "inst/extdata/demo.bb", organism = "dmelanogaster",
+  model = "S2", condition = "WT", genome_assembly = "dm3",
+  chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
 
 }

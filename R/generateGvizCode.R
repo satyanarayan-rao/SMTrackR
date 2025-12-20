@@ -1,3 +1,50 @@
+#' Visualize Single Molecule Footprint Patterns with Ideogram and Gene Tracks
+#'
+#' @description Generates Gviz-compatible R code that puts SMF footprints below ideogram and genetracks. This call assumes that you have already ran `plotFootprints` function. 
+#' Designed for Drosophila melanogaster analysis with expandable parameters for other organisms.
+#'
+#' @param organism Organism code (default: "dmelanogaster")
+#' @param model Biological model/system (default: "S2" cells)
+#' @param condition Experimental condition (default: "WT")
+#' @param genome_assembly Genome version (default: "dm6")
+#' @param type Data type ("dSMF" = dual enzyme Single Molecule Footprinting)
+#' @param chromosome Chromosome ID (e.g., "chr2L")
+#' @param start Genomic start position (numeric/character)
+#' @param stop Genomic end position (numeric/character)
+#' @param tr Track name for BigBed file resource (default: "fp_and_mvec")
+#' @param label Plot title annotation
+#' @param span_left Upstream window size from region (default: 150)
+#' @param span_right Downstream window size from region (default: 150)
+#' @param remove_dup Remove duplicate reads? (default: FALSE)
+#' @param fp_cap Maximum footprint value for y-axis scaling (default: 50)
+#' @param gviz_left left zoom (bases) from the start
+#' @param gviz_right right zoom (bases) from the stop
+#'
+#' @return Saves a heatmap in pdf, png, and eps file formats.
+#'
+#' @details
+#' This function generates a R code running which one can get ideogram, genetracks and SMF heatmap altogether in one plot.
+#'
+#' @examples
+#' # Basic usage with default parameters
+#' generateGvizCodeforSMF(organism = "mmusculus", model = "16cell", 
+#'                          condition = "WT", genome_assembly = "mm10",
+#'                          type = "SMF", chromosome = "chr1",start = 191718250,
+#'                          stop = 191718280, tr = "16cell", label = "tss",
+#'                          fp_cap = 50, remove_dup = F, gviz_left = 500,
+#'                          gviz_right = 500)
+#'                          
+#'
+#' @export
+generateGvizCodeforSMF <- function (organism = "mmusculus", model = "16cell", 
+                       condition = "WT", genome_assembly = "mm10",
+                       type = "SMF", chromosome = "chr1", start = 191718250,
+                       stop = 191718280, tr = "16cell", label = "tss",
+                       fp_cap = 50, remove_dup = F, gviz_left = 500, 
+                       gviz_right = 500) {
+    # Function implementation
+}
+
 generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         condition = "WT", genome_assembly = "dm6",
         type = "dSMF", chromosome = "chr2L",
@@ -178,9 +225,8 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
 
     }else{
         cat (paste0("Both files", fp_file, " ", occ_file, " ", "must exist to generate the code\n"))
-        stop(-1)
+        return ("Please call plotFootprints function before you run this function")
     }
-
 
 }
 

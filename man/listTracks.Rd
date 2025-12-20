@@ -4,14 +4,7 @@
 \alias{listTracks}
 \title{Discover Available Single Molecule Data Tracks}
 \usage{
-listTracks(
-  sheet_url =
-    "https://docs.google.com/spreadsheets/d/1eu2Y2S0lyAUqxlvtnPBCO55OrxidYV7SwVRkqelPcKk/edit?gid=0#gid=0"
-)
-}
-\arguments{
-\item{sheet_url}{URL for Google Sheet containing track metadata
-(default: package-maintained spreadsheet)}
+listTracks()
 }
 \value{
 A tibble containing track metadata with columns:
