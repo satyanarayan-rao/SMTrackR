@@ -37,10 +37,9 @@ library(SMTrackR)
 SMTrackR::plotFootprints(organism = "mmusculus", model = "8cell", condition = "WT", 
                genome_assembly = "mm10", type = "SMF", chromosome = "chr5", 
                start = 113847750,  stop  = 113847780, tr = "8cell", label = "remove_dup_true", 
-               fp_cap = 50, remove_dup = T)
+               fp_cap = 50, remove_dup = T, target_dir = "smf")
 ```
-NOTE: the above run will create a directory `plots` in the current working
-directory which will have `remove_dup_true.plot.pdf`. 
+NOTE: The heatmap will be saved in `smf/plots/remove_dup_true.plot.pdf`. 
 
 The `png` version of the plot is shown here. 
 
@@ -66,7 +65,7 @@ The above command will generate `peak229.plot.pdf`. The `png` version is shown b
 
 ```
 library(SMTrackR)
-SMTrackR::plotMethylationCallsNanopore()
+SMTrackR::plotMethylationCallsNanopore(target_dir = "nanopore")
 ```
 
 The png version of the plot is shown below. 
@@ -81,14 +80,15 @@ Because `Gviz` is a heavy package, we have not made ours to depend on this, but 
 SMTrackR::plotFootprints(organism = "mmusculus", model = "16cell", condition = "WT",
                          genome_assembly = "mm10", type = "SMF", chromosome = "chr1",
                          start = 191718250,  stop  = 191718280, tr = "16cell",
-                         label = "tss", fp_cap = 50, remove_dup = F)
+                         label = "tss", fp_cap = 50, remove_dup = F, target_dir = "smf")
 SMTrackR::generateGvizCodeforSMF(organism = "mmusculus", model = "16cell", condition = "WT",
                          genome_assembly = "mm10", type = "SMF", chromosome = "chr1",
                          start = 191718250,  stop  = 191718280, tr = "16cell",
-                         label = "tss", fp_cap = 50, remove_dup = F, gviz_left = 500, gviz_right = 500)
+                         label = "tss", fp_cap = 50, remove_dup = F, gviz_left = 500, 
+                         gviz_right = 500, target_dir = "smf")
 ```
 
-The png version of `plots/tss.gviz.pdf` is shown below. 
+The png version of `smf/plots/tss.gviz.pdf` is shown below. 
 
 <img src="./plots/tss.gviz.png" alt="nanopore" width="600">
 
