@@ -74,7 +74,7 @@ The png version of the plot is shown below.
 
 ## Visualizing on gene tracks
 
-Because `Gviz` is a heavy package, we have not made ours to depend on this, but we generate a code that renders the heatmap below the gene track. Users are of course free to change the zoom level and add other tracks of their need. The generated code renders ideogram, axis, gene tracks and the heatmap highlight the center. It requires that you run the **`plotFootprint` function first**, so that it can use the heatmap data. Please look at the code below.
+Because `Gviz` is a heavy package, we have not made ours to depend on this, but we generate a code that renders the heatmap below the gene track. Users are of course free to change the zoom level and add other tracks of their need. The generated code renders ideogram, axis, gene tracks and the heatmap highlight the center. It requires that you run the **`plotFootprints` function first**, so that it can use the heatmap data. Please look at the code below.
 
 ```
 SMTrackR::plotFootprints(organism = "mmusculus", model = "16cell", condition = "WT",
