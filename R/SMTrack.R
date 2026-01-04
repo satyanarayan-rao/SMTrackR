@@ -1,38 +1,42 @@
 retrieve_json <- function (track_url = "", assembly = "dm6",
                            chromosome = "chr2L", st = "480290",
                            en = "480320", label = "peak229",
-                           tr = "fp_and_mvec"){
+                           tr = "fp_and_mvec", target_dir = ""){
 
     download_command = paste0(track_url, ";", "genome=", assembly,";",
                               "track=", tr, ";",
                               "chrom=", chromosome,";",
                               "start=", st,";", "end=", en)
     print (download_command)
-    download.file(download_command, paste0(label, ".json"))
-    return (paste0(label, ".json"))
+    download.file(download_command, paste (target_dir, paste0(label, ".json"),
+                                           sep = "/"))
+    json_path = paste (target_dir, paste0(label, ".json"),sep = "/")
+    return (json_path)
 }
 
 downloadJson <- function (track_url = "", assembly = "dm6",
                           chromosome = "chr2L", st = "",
                           en = "", label = "peak229",
-                          tr = "fp_and_mvec"){
+                          tr = "fp_and_mvec", target_dir = ""){
     cat ("Using UCSC API to get JSON dump from BigBed Track ...\n")
     #print (c(track_url, assembly, chromosome, st, en, label))
     json_name <- retrieve_json (track_url = track_url, assembly = assembly,
                                chromosome = chromosome, st = st, en = en,
-                               label = label, tr = tr)
-    return(json_name)
+                               label = label, tr = tr, target_dir = target_dir)
+    return (json_name)
 
 }
 
-JSON_to_Bed <- function (json_file = "peak229.json", label = "peak229", tr = "fp_and_mvec") {
+JSON_to_Bed <- function (json_file = "peak229.json", label = "peak229", 
+                         tr = "fp_and_mvec", target_dir = "") {
     x <- fromJSON(json_file)
     flat_names <- names (x[[tr]])
     df_of_json = as.data.frame(x[[tr]], col.names = flat_names)
 
-
-    output_file = file (paste0(label, ".all_fp.bed"), "w")
-    output_file_name = paste0(label, ".all_fp.bed")
+    output_file = file (paste(target_dir, paste0(label, ".all_fp.bed"), 
+                              sep = "/"), "w")
+    output_file_name = paste(target_dir, paste0(label, ".all_fp.bed"),
+                             sep = "/")
     for (fp in seq_len(nrow(df_of_json))) {
         chrom <- df_of_json$chrom[fp]
         st <- df_of_json$chromStart[fp]
@@ -51,13 +55,16 @@ JSON_to_Bed <- function (json_file = "peak229.json", label = "peak229", tr = "fp
 
 JSON_to_Bed_for_Nanopore <- function (json_file = "smac_seq.json",
                                       label = "smac_seq",
-                                      tr = "nanopore_meth_calls") {
+                                      tr = "nanopore_meth_calls",
+                                      target_dir = "") {
     x <- fromJSON(json_file)
     flat_names <- names (x[[tr]])
     df_of_json = as.data.frame(x[[tr]], col.names = flat_names)
 
-    output_file = file (paste0(label, ".methylation_calls.bed"), "w")
-    output_file_name = paste0(label, ".methylation_calls.bed")
+    output_file = file (paste(target_dir, paste0(label, ".methylation_calls.bed"),
+                              sep = "/"), "w")
+    output_file_name = paste(target_dir, paste0(label, ".methylation_calls.bed"),
+                              sep = "/")
     for (meth_call in seq_len(nrow(df_of_json))) {
         chrom <- df_of_json$chrom[meth_call]
         st <- df_of_json$chromStart[meth_call]
@@ -101,11 +108,11 @@ intersectQueryandSubject <- function(query_file = "peak229.bed",
 prepareQueryFile <- function (chromosome = "chr2L",
                               start = "480290",
                               stop = "480320",
-                              label = "peak229"){
-    query_file <- paste0(label, ".bed")
+                              label = "peak229", target_dir = ""){
+    query_file <- paste(target_dir, paste0(label, ".bed"), sep = "/")
     cat (paste(chromosome, start, stop, sep = "\t"),
-         file = paste0(label, ".bed"))
-    cat ("\n", file = paste0(label, ".bed"), append = TRUE)
+         file = query_file, append = FALSE)
+    cat ("\n", file = query_file, append = TRUE)
     return (query_file)
 }
 

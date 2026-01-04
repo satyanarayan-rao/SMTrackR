@@ -560,7 +560,7 @@ getHubURL <- function (organism = "dmelanogaster",
     return (track_url)
 }
 remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
-                                        label = "peak229"){
+                                        label = "peak229", target_dir = ""){
     # the data is coming from big bed file, so the coordinates
     # are ought to be sorted
     dt <- read.table(fp_file, sep = "\t", header = FALSE,
@@ -579,8 +579,9 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
     dup_mol_df$srr <- NULL
     dup_mol_df$mol <- NULL
 
-    subject_file <- paste0(label, ".dup_removed.bed")
-    dup_file <- paste0(label, ".dup.bed")
+    subject_file <- paste(target_dir, paste0(label, ".dup_removed.bed"),
+                          sep = "/")
+    dup_file <- paste(target_dir, paste0(label, ".dup.bed"), sep = "/")
     write.table(uniq_mol_df, file = subject_file, sep = "\t",
                 row.names = FALSE, col.names = FALSE, quote = FALSE)
     write.table(dup_mol_df, file = dup_file, sep = "\t",
@@ -608,6 +609,7 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
 #' @param span_right Downstream window size from region (default: 150)
 #' @param remove_dup Remove duplicate reads? (default: FALSE)
 #' @param fp_cap Maximum footprint value for y-axis scaling (default: 50)
+#' @param target_dir destination directory where outputs will be stored
 #'
 #' @return Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file
 #'
@@ -633,10 +635,9 @@ plotFootprints <- function(
         start = 480290, stop = 480320,
         tr = "fp_and_mvec", label = "peak229",
         span_left = 150, span_right = 150, remove_dup = FALSE,
-        fp_cap = 50) {
+        fp_cap = 50, target_dir = "") {
     # Function implementation
 }
-
 
 plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                             condition = "WT", genome_assembly = "dm6",
@@ -644,27 +645,35 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                             start = 480290, stop = 480320,
                             tr = "fp_and_mvec", label = "peak229",
                             span_left = 150, span_right = 150,
-                            remove_dup = FALSE, fp_cap = 50){
+                            remove_dup = FALSE, fp_cap = 50, target_dir = ""){
 
     # get JSON first
     #print (track)
+    if (target_dir == ""){
+        target_dir = tempdir()
+    }else if (!dir.exists(target_dir)){
+        dir.create(target_dir, recursive = TRUE)
+    }
     track_url <- getHubURL(organism = organism, model = model,
                            condition = condition, type = type,
                            genome_assembly = genome_assembly, tr = tr)
     #print(track_url)
     json_file <- downloadJson(track_url = track_url, chromosome = chromosome,
                               assembly = genome_assembly, st = start,
-                              en = stop, label = label, tr = tr)
-    tmp_file <- JSON_to_Bed(json_file = json_file, label = label, tr = tr)
+                              en = stop, label = label, tr = tr, 
+                              target_dir = target_dir)
+    tmp_file <- JSON_to_Bed(json_file = json_file, label = label, tr = tr,
+                            target_dir = target_dir)
     subject_file <- NA
     if (remove_dup == TRUE){
         subject_file <- remove_duplicate_molecules(fp_file = tmp_file,
-                                                   label = label)
+                                    label = label, target_dir = target_dir)
     }else{
         subject_file <- tmp_file
     }
     query_file <- prepareQueryFile(chromosome = chromosome,
-                                  start = start, stop = stop, label = label)
+                                  start = start, stop = stop, 
+                                  label = label, target_dir = target_dir)
 
     overlap_df <- intersectQueryandSubject(query_file = query_file,
                                           subject_file = subject_file)
@@ -702,23 +711,24 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
     length_and_read_info_df <- writeBindingStatesFiles (
         processed_df = processed_df,
         label = label,fp_cap = fp_cap,
-        span_left = span_left, span_right = span_right)
+        span_left = span_left, span_right = span_right,
+        target_dir = target_dir)
     ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
                                                        order(binding_state_vec,
                                                        flag_vec,
                                                        abs_start_vec)),]
 
     writeIntermediateFiles(ordered_by_length = ordered_by_length,
-                           label = label)
+                           label = label, target_dir = target_dir)
 
     plot_title = paste0(organism, " ", model, " ", condition)
     x_label = paste0(label, " (", genome_assembly, " ", 
                         chromosome, ":", start, "-", stop, ")")
     savePlotSMForDSMF(label = label, span_left = span_left, 
                       span_right = span_right, plot_title = plot_title,
-                      x_label = x_label)
+                      x_label = x_label, target_dir = target_dir)
     #removing the intermediate files:
-    deleteIntermediates(label = label)
+    deleteIntermediates(label = label, target_dir = target_dir)
 
 }
 
@@ -741,6 +751,7 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
 #' @param span_right Downstream window size from region (default: 150)
 #' @param remove_dup Remove duplicate reads? (default: FALSE)
 #' @param fp_cap Maximum footprint value for y-axis scaling (default: 50)
+#' @param target_dir destination directory where outputs will be stored
 #'
 #' @return Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file
 #'
@@ -764,7 +775,7 @@ plotFootprintsUsingLocalBigBed <- function(
         model = "S2", condition = "WT", genome_assembly = "dm3",
         chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
-        remove_dup = FALSE,fp_cap = 50) {
+        remove_dup = FALSE,fp_cap = 50, target_dir = "") {
     # Function implementation
 }
 
@@ -774,7 +785,7 @@ plotFootprintsUsingLocalBigBed <- function (
         model = "S2", condition = "WT", genome_assembly = "dm3",
         chromosome = "chr2L",start = 480290, stop = 480320,
         label = "peak229", span_left = 150, span_right = 150,
-        remove_dup = FALSE,fp_cap = 50) {
+        remove_dup = FALSE,fp_cap = 50, target_dir = "") {
     if (bigBed == "") {
         cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
         return ("bigBed file path")
@@ -782,8 +793,14 @@ plotFootprintsUsingLocalBigBed <- function (
         cat ("bigBed file path requied\n")
         return ("bigBed file path")
     }
+    if (target_dir == ""){
+        target_dir = tempdir()
+    }else if (!dir.exists(target_dir)){
+        dir.create(target_dir, recursive = TRUE)
+    }
     query_file <- prepareQueryFile(chromosome = chromosome,
-                                   start = start, stop = stop, label = label)
+                                   start = start, stop = stop, 
+                                   label = label, target_dir = target_dir)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)
@@ -819,25 +836,27 @@ plotFootprintsUsingLocalBigBed <- function (
     processed_df$strand <- "."
     processed_df$expanded_footprint <- with_edges
     processed_df$expanded_m_vec <- expanded_m_vec
-    length_and_read_info_df <- writeBindingStatesFiles (
+    length_and_read_info_df <- writeBindingStatesFiles(
         processed_df = processed_df,
         label = label,fp_cap = fp_cap,
-        span_left = span_left, span_right = span_right)
+        span_left = span_left, span_right = span_right, 
+        target_dir = target_dir)
     ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
                                                        order(binding_state_vec,
                                                              flag_vec,
                                                              abs_start_vec)),]
 
     writeIntermediateFiles(ordered_by_length = ordered_by_length,
-                           label = label)
+                           label = label, target_dir = target_dir)
 
     plot_title = paste0(organism, " ", model, " ", condition)
     x_label = paste0(label, " (", genome_assembly, " ", 
                         chromosome, ":", start, "-", stop, ")")
     savePlotSMForDSMF(label = label, span_left = span_left, 
-                      span_right = span_right, plot_title = plot_title)
+                      span_right = span_right, plot_title = plot_title, 
+                      target_dir = target_dir)
     #removing the intermediate files:
-    deleteIntermediates(label = label)
+    deleteIntermediates(label = label, target_dir = target_dir)
 }
 
 
@@ -899,6 +918,7 @@ listTracks <- function(){
 #' @param span_left Upstream window size from region (default: 1000)
 #' @param span_right Downstream window size from region (default: 1000)
 #' @param stride sliding window used for singal aggregation 
+#' @param target_dir destination directory where outputs will be stored
 #'
 #' @return Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file
 #'
@@ -920,7 +940,7 @@ listTracks <- function(){
 #'         type = "SMF", chromosome = "chrIII",
 #'         start = 114300, stop = 114600,
 #'         tr = "nanopore_meth_calls", label = "smac_seq",
-#'         span_left = 1000, span_right = 1000, stride = 5)
+#'         span_left = 1000, span_right = 1000, stride = 5, target_dir = "")
 
 
 #' @export
@@ -930,7 +950,7 @@ plotMethylationCallsNanopore <- function(
         type = "SMF", chromosome = "chrIII",
         start = 114300, stop = 114600,
         tr = "nanopore_meth_calls", label = "smac_seq",
-        span_left = 1000, span_right = 1000, stride = 5) {
+        span_left = 1000, span_right = 1000, stride = 5, target_dir = "") {
     # Function implementation
 }
 
@@ -941,7 +961,13 @@ plotMethylationCallsNanopore <- function(
         type = "SMF", chromosome = "chrIII",
         start = 114300, stop = 114600,
         tr = "nanopore_meth_calls", label = "smac_seq",
-        span_left = 1000, span_right = 1000, stride = 5) {
+        span_left = 1000, span_right = 1000, stride = 5, target_dir = "") {
+
+    if (target_dir == ""){
+        target_dir = tempdir()
+    }else if (!dir.exists(target_dir)){
+        dir.create(target_dir, recursive = TRUE)
+    }
 
     track_url <- getHubURL(organism = organism, model = model,
                            condition = condition, type = type,
@@ -949,11 +975,14 @@ plotMethylationCallsNanopore <- function(
     #print(track_url)
     json_file <- downloadJson(track_url = track_url, chromosome = chromosome,
                               assembly = genome_assembly, st = start,
-                              en = stop, label = label, tr = tr)
+                              en = stop, label = label, tr = tr, 
+                              target_dir = target_dir)
     subject_file <- JSON_to_Bed_for_Nanopore(json_file = json_file,
-                                             label = label, tr = tr)
+                                             label = label, tr = tr,
+                                             target_dir = target_dir)
     query_file <- prepareQueryFile(chromosome = chromosome,
-                                   start = start, stop = stop, label = label)
+                                   start = start, stop = stop, 
+                                   label = label, target_dir = target_dir)
 
     overlap_df <- intersectQueryandSubject(query_file = query_file,
                                            subject_file = subject_file)
@@ -971,7 +1000,9 @@ plotMethylationCallsNanopore <- function(
     overlap_df_for_plot$score = overlap_df$score
     overlap_df_for_plot$methylation_call = methylation_call
 
-    write.table(overlap_df_for_plot, file = paste0(label, ".intersect.bed"),
+    write.table(overlap_df_for_plot, 
+                file = paste(target_dir, paste0(label, ".intersect.bed"), 
+                             sep = "/"),
                 sep = "\t", row.names = F, col.names = F, quote = F)
     data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df_for_plot,
                                                         span_left = span_left,
@@ -994,14 +1025,17 @@ plotMethylationCallsNanopore <- function(
     ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
     data_to_plot = data_to_plot[row.names(ordered_tmp),]
     write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
-                 file = paste0(label, ".strand_wise_count.tsv"),
+                 file = paste (target_dir, 
+                          paste0(label, ".strand_wise_count.tsv"), sep = "/"),
                  sep = "\t", row.names = F, col.names = F, quote = F)
-    write.table (data_to_plot, file = paste0(label, ".nanopore_methylation.tsv"),
+    write.table (data_to_plot, file = paste(target_dir, 
+                        paste0(label, ".nanopore_methylation.tsv"), sep = "/"),
                  sep = "\t", row.names = T, col.names = F, quote = FALSE)
     plot_title = paste0(organism, " ", model, " ", condition)
     x_label = paste0(label, " (", genome_assembly, " ", 
                         chromosome, ":", start, "-", stop, ")")
-    savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label)
+    savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label,
+                     target_dir = target_dir)
 }
 
 
@@ -1022,6 +1056,7 @@ plotMethylationCallsNanopore <- function(
 #' @param span_right Downstream window size from region (default: 150)
 #' @param remove_dup Remove duplicate reads? (default: FALSE)
 #' @param stride a window size used for averaging the methylation call values
+#' @param target_dir destination directory where outputs will be stored
 #'
 #' @return Saves a methylation calls (binary) heatmap in pdf, png, and eps file formats.
 #'
@@ -1035,7 +1070,7 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function(
         bigBed = "", 
         chromosome = "chrIII",start = 114300, stop = 114600,
         label = "smac_seq", span_left = 1000, span_right = 1000,
-        remove_dup = FALSE, stride = 5) {
+        remove_dup = FALSE, stride = 5, target_dir = "") {
     # Function implementation
 }
 
@@ -1044,7 +1079,7 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
         bigBed = "",
         chromosome = "chrIII",start = 114300, stop = 114600,
         label = "smac_seq", span_left = 1000, span_right = 1000,
-        remove_dup = FALSE, stride = 5) {
+        remove_dup = FALSE, stride = 5, target_dir = "") {
 
     if (bigBed == "") {
         cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
@@ -1053,14 +1088,22 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
         cat ("bigBed file path requied\n")
         return ("bigBed file path")
     }
+    if (target_dir == ""){
+        target_dir = tempdir()
+    }else if (!dir.exists(target_dir)){
+        dir.create(target_dir, recursive = TRUE)
+    }
+
 
     query_file <- prepareQueryFile(chromosome = chromosome,
-                                   start = start, stop = stop, label = label)
+                                   start = start, stop = stop,
+                                   label = label, target_dir = target_dir)
 
     overlap_df <- overlapUsingBigBed(bigbed_file = bigBed,
                                      query_file = query_file)
 
-    write.table(overlap_df, file = paste0(label, ".intersect.bed"),
+    write.table(overlap_df, file = paste(target_dir, 
+                           paste0(label, ".intersect.bed"), sep = "/"),
                 sep = "\t", row.names = F, col.names = F, quote = F)
     data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df,
                                                         span_left = span_left,
@@ -1083,9 +1126,11 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
     ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
     data_to_plot = data_to_plot[row.names(ordered_tmp),]
     write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
-                 file = paste0(label, ".strand_wise_count.tsv"),
+                 file = paste(target_dir, paste0(label, ".strand_wise_count.tsv"),
+                              sep = "/"),
                  sep = "\t", row.names = F, col.names = F, quote = F)
-    write.table (data_to_plot, file = paste0(label, ".nanopore_methylation.tsv"),
+    write.table (data_to_plot, file = paste(target_dir, paste0(label, 
+                                      ".nanopore_methylation.tsv"), sep = "/"),
                  sep = "\t", row.names = T, col.names = F, quote = FALSE)
-    savePlotNanopore(label = label)
+    savePlotNanopore(label = label, target_dir = target_dir)
 }

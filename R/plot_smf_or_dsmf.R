@@ -1,8 +1,10 @@
 savePlotSMForDSMF <- function (label = "peak229",
                            span_left = 150, span_right = 150, 
                            plot_title = "dmelanogaster S2 WT",
-                           x_label = "peak229 (dm6 chr2L:480290-480320)"){
-    dat_for_plot <- read.table(paste0(label, ".num.fp.tsv"),
+                           x_label = "peak229 (dm6 chr2L:480290-480320)",
+                           target_dir = ""){
+    dat_for_plot <- read.table(paste(target_dir, paste0(label, ".num.fp.tsv"),
+                                     sep = "/"),
                                sep = "\t", header = FALSE,
                                stringsAsFactors = FALSE,
                                row.names = 1, comment.char = "%")
@@ -12,15 +14,14 @@ savePlotSMForDSMF <- function (label = "peak229",
 
     dat_for_plot <- apply(dat_for_plot, 2, rev)
 
-    main_dir <- file.path("./", "plots")
+    main_dir <- target_dir
     if (!dir.exists(main_dir)){
         dir.create(main_dir, recursive = TRUE)
     }
-    plot_dir <- file.path("plots")
+    plot_dir <- paste(main_dir, "plots", sep = "/")
     if (!dir.exists(plot_dir)){
         dir.create(plot_dir, recursive = TRUE)
     }
-
 
     all_valid_states <- data.frame(table(
         unlist(lapply (row.names(dat_for_plot),
@@ -48,7 +49,7 @@ savePlotSMForDSMF <- function (label = "peak229",
     x_width <- span_left + span_right + 1
     if (nrow(jj) > 15){
 
-        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
+        pdf (file.path(plot_dir, paste0(label, ".heatmap.pdf")),
              height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
@@ -96,30 +97,30 @@ savePlotSMForDSMF <- function (label = "peak229",
 
         box(lwd=0.5)
 
-        #saveToPDF(file.path(plot_dir, paste0(label, ".plot.pdf")),
+        #saveToPDF(file.path(plot_dir, paste0(label, ".heatmap.pdf")),
         #          height = 6, width = 4.5)
         #saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
         #          height = 6, width = 4.5, units = "in", res = 300)
-        #saveToEPS(file.path(plot_dir, paste0(label, ".plot.eps")),
+        #saveToEPS(file.path(plot_dir, paste0(label, ".heatmap.eps")),
         #          height = 6, width = 4.5,
         #          horizontal = FALSE, paper = "special")
-        dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
+        dev.copy(postscript, file.path(plot_dir, paste0(label, ".heatmap.eps")),
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
         dev.control("enable")
 
-        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
+        dev.copy(png, file.path(plot_dir, paste0(label, ".heatmap.png")),
                  height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
         dev.off()
         dev.off()
         cat (paste0("Heatmap is saved in the file ", 
-                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+                    file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
         cat ("\n")
         
     }else {
 
-        pdf (file.path(plot_dir, paste0(label, ".plot.pdf")),
+        pdf (file.path(plot_dir, paste0(label, ".heatmap.pdf")),
              height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
@@ -128,7 +129,7 @@ savePlotSMForDSMF <- function (label = "peak229",
         text(x = 0.5, y = 0.5, paste0("Only ", nrow (jj),
                                       " molecules, not enough for plotting"))
 
-        dev.copy(postscript, file.path(plot_dir, paste0(label, ".plot.eps")),
+        dev.copy(postscript, file.path(plot_dir, paste0(label, ".heatmap.eps")),
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
         dev.control("enable")
@@ -139,7 +140,7 @@ savePlotSMForDSMF <- function (label = "peak229",
         dev.off()
         dev.off()
         cat (paste0("Heatmap is saved in the file ", 
-                    file.path(plot_dir, paste0(label, ".plot.pdf"))))
+                    file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
         cat ("\n")
         
     }

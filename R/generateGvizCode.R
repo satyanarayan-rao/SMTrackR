@@ -19,6 +19,7 @@
 #' @param fp_cap Maximum footprint value for y-axis scaling (default: 50)
 #' @param gviz_left left zoom (bases) from the start
 #' @param gviz_right right zoom (bases) from the stop
+#' @param target_dir destination directory (must be the same used in `plotFootprints` function)
 #'
 #' @return Saves a heatmap in pdf, png, and eps file formats.
 #'
@@ -32,7 +33,7 @@
 #'                          type = "SMF", chromosome = "chr1",start = 191718250,
 #'                          stop = 191718280, tr = "16cell", label = "tss",
 #'                          fp_cap = 50, remove_dup = F, gviz_left = 500,
-#'                          gviz_right = 500)
+#'                          gviz_right = 500, target_dir = "")
 #'                          
 #'
 #' @export
@@ -41,7 +42,7 @@ generateGvizCodeforSMF <- function (organism = "mmusculus", model = "16cell",
                        type = "SMF", chromosome = "chr1", start = 191718250,
                        stop = 191718280, tr = "16cell", label = "tss",
                        fp_cap = 50, remove_dup = F, gviz_left = 500, 
-                       gviz_right = 500) {
+                       gviz_right = 500, target_dir = "") {
     # Function implementation
 }
 
@@ -51,10 +52,11 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         start = 480290, stop = 480320,
         tr = "fp_and_mvec", label = "peak229",
         span_left = 150, span_right = 150, remove_dup = FALSE,
-        fp_cap = 50, gviz_left = 1000, gviz_right = 1000){
+        fp_cap = 50, gviz_left = 1000, gviz_right = 1000, target_dir = ""){
 
-    fp_file = paste0(label, ".num.fp.tsv")
-    occ_file = paste0("plots/", label, ".states.tsv")
+    fp_file = paste (target_dir, paste0(label, ".num.fp.tsv"), sep = "/")
+    occ_file = paste (target_dir, paste0("plots/", label, ".states.tsv"), 
+                      sep = "/")
 
     fp_file_flag = file.exists(fp_file)
     occ_file_flag = file.exists(occ_file)
@@ -66,7 +68,7 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
         num_states = dim(occ_dt)[1]
         total_molecules = sum(occ_dt$count)
 
-        gviz_code_file = paste0(label, ".gviz.R")
+        gviz_code_file = paste(target_dir, paste0(label, ".gviz.R"), sep = "/")
         libs_and_options = c("library(biomaRt)", "library(Gviz)",
                              "options(ucscChromosomeNames=TRUE)")
         cat (libs_and_options, sep = "\n", file = gviz_code_file)
@@ -224,7 +226,8 @@ generateGvizCodeforSMF <- function (organism = "demlanogaster", model = "S2",
                     gviz_code_file, " to place the heatmap on gene track!\n"))
 
     }else{
-        cat (paste0("Both files", fp_file, " ", occ_file, " ", "must exist to generate the code\n"))
+        cat (paste0("Both files", fp_file, " ", occ_file, " ", 
+                    "must exist to generate the code\n"))
         return ("Please call plotFootprints function before you run this function")
     }
 

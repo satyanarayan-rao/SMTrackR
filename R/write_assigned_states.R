@@ -1,9 +1,13 @@
 writeBindingStatesFiles <- function (
         processed_df = NULL,
         label = "peak229",
-        fp_cap = 50, span_left = 150, span_right = 150){
-    ofp <- file (paste0(label, "_assigned_states.tsv"), "w")
-    ofp_verbose <- file (paste0(label, "_verbose.tsv"), "w")
+        fp_cap = 50, span_left = 150, span_right = 150,
+        target_dir = ""){
+
+    ofp <- file (paste(target_dir, 
+                       paste0(label, "_assigned_states.tsv"), sep = "/"), "w")
+    ofp_verbose <- file (paste(target_dir, 
+                               paste0(label, "_verbose.tsv"), sep = "/"), "w")
     max_length_vec <- c()
     read_info_vec <- c()
     abs_start_vec <- c()

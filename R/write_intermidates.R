@@ -1,7 +1,9 @@
 writeIntermediateFiles <- function (ordered_by_length = NULL,
-                                    label = "peak229") {
+                                    label = "peak229", target_dir = "") {
     write.table(ordered_by_length,
-                file = paste0(label, "_labelled_and_ordered.tsv"),
+                file = paste(target_dir, 
+                             paste0(label, "_labelled_and_ordered.tsv"), 
+                             sep = "/"),
                 sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
     num_coverted_fp <- unlist (lapply(ordered_by_length$fp_vec,
                                       function (x) {convert_fp_char_to_num(x)}))
@@ -11,10 +13,12 @@ writeIntermediateFiles <- function (ordered_by_length = NULL,
                             num_coverted_fp = num_coverted_fp)
     num_mvec_df <- data.frame(read_id = ordered_by_length$read_id,
                               num_coverted_m = num_coverted_m)
-    write.table (num_fp_df, file = paste0(label, ".num.fp.tsv"),
+    write.table (num_fp_df, 
+                 file = paste(target_dir, paste0(label, ".num.fp.tsv"), sep ="/"),
                  sep = "\t", row.names = FALSE,
                  col.names = FALSE, quote = FALSE)
-    write.table (num_mvec_df, file = paste0(label, ".num.mvec.tsv"),
+    write.table (num_mvec_df, 
+                 file = paste(target_dir, paste0(label, ".num.mvec.tsv"), sep ="/"),
                  sep = "\t", row.names = FALSE,
                  col.names = FALSE, quote = FALSE)
 }

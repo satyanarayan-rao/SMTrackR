@@ -17,7 +17,8 @@ plotFootprintsUsingLocalBigBed(
   span_left = 150,
   span_right = 150,
   remove_dup = FALSE,
-  fp_cap = 50
+  fp_cap = 50,
+  target_dir = ""
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ plotFootprintsUsingLocalBigBed(
 \item{remove_dup}{Remove duplicate reads? (default: FALSE)}
 
 \item{fp_cap}{Maximum footprint value for y-axis scaling (default: 50)}
+
+\item{target_dir}{destination directory where outputs will be stored}
 }
 \value{
 Saves a heatmap in pdf, png, and eps file formats. Also, occupancies are saved in a tsv file

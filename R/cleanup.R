@@ -1,7 +1,14 @@
-deleteIntermediates <- function (label = "peak229"){
-    file.remove(paste0(label, "_assigned_states.tsv"))
-    file.remove(paste0(label, "_labelled_and_ordered.tsv"))
-    file.remove(paste0(label, "_verbose.tsv"))
+deleteIntermediates <- function (label = "peak229", target_dir = ""){
+    label = paste(target_dir, label, sep = "/")
+    if (file.exists(paste0(label, "_assigned_states.tsv"))){
+        file.remove(paste0(label, "_assigned_states.tsv"))
+    }
+    if (file.exists(paste0(label, "_labelled_and_ordered.tsv"))){
+        file.remove(paste0(label, "_labelled_and_ordered.tsv"))
+    }
+    if (file.exists(paste0(label, "_verbose.tsv"))){
+        file.remove(paste0(label, "_verbose.tsv"))
+    }
     if (file.exists(paste0(label, "all_fp.bed"))){
         file.remove(paste0(label, ".all_fp.bed"))
     }
