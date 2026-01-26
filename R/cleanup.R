@@ -16,7 +16,7 @@ deleteIntermediates <- function (label = "peak229", target_dir = ""){
     if (file.exists(paste0(label, ".json"))){
         file.remove(paste0(label, ".json"))
     }
-
+    
     #file.remove(paste0(label, ".num.fp.tsv"))
     #file.remove(paste0(label, ".num.mvec.tsv"))
 }

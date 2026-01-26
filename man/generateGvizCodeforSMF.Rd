@@ -12,7 +12,7 @@ generateGvizCodeforSMF(
   type = "dSMF",
   chromosome = "chr2L",
   start = 480290,
-  stop = 480320,
+  end = 480320,
   tr = "fp_and_mvec",
   label = "peak229",
   span_left = 150,
@@ -39,7 +39,7 @@ generateGvizCodeforSMF(
 
 \item{start}{Genomic start position (numeric/character)}
 
-\item{stop}{Genomic end position (numeric/character)}
+\item{end}{Genomic end position (numeric/character)}
 
 \item{tr}{Track name for BigBed file resource (default: "fp_and_mvec")}
 
@@ -55,7 +55,7 @@ generateGvizCodeforSMF(
 
 \item{gviz_left}{left zoom (bases) from the start}
 
-\item{gviz_right}{right zoom (bases) from the stop}
+\item{gviz_right}{right zoom (bases) from the end}
 
 \item{target_dir}{destination directory (must be the same used in `plotFootprints` function)}
 }
@@ -74,8 +74,8 @@ This function generates a R code running which one can get ideogram, genetracks 
 generateGvizCodeforSMF(organism = "mmusculus", model = "16cell", 
                          condition = "WT", genome_assembly = "mm10",
                          type = "SMF", chromosome = "chr1",start = 191718250,
-                         stop = 191718280, tr = "16cell", label = "tss",
-                         fp_cap = 50, remove_dup = F, gviz_left = 500,
+                         end = 191718280, tr = "16cell", label = "tss",
+                         fp_cap = 50, remove_dup = FALSE, gviz_left = 500,
                          gviz_right = 500, target_dir = "")
                          
 

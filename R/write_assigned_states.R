@@ -3,7 +3,7 @@ writeBindingStatesFiles <- function (
         label = "peak229",
         fp_cap = 50, span_left = 150, span_right = 150,
         target_dir = ""){
-
+    
     ofp <- file (paste(target_dir, 
                        paste0(label, "_assigned_states.tsv"), sep = "/"), "w")
     ofp_verbose <- file (paste(target_dir, 
@@ -15,7 +15,7 @@ writeBindingStatesFiles <- function (
     m_vec <- c()
     binding_state_vec <- c()
     flag_vec <- c()
-
+    
     for (idx in seq (nrow(processed_df)) ){
         line <- paste (processed_df[idx, ], collapse = "\t")
         #print (line)
@@ -57,7 +57,7 @@ writeBindingStatesFiles <- function (
         cat(paste0(marker, "\t", extended_fp, "\t", extended_m),
             file = ofp_verbose, append = TRUE)
         cat ("\n", file = ofp_verbose, append =  TRUE)
-
+        
         tmp <- unlist(strsplit(marker, split = "`"))
         flag_and_state <- unlist(strsplit(tmp[length(tmp)], split = "#"))
         flag <- flag_and_state[1]
@@ -84,7 +84,7 @@ writeBindingStatesFiles <- function (
             flag_vec <- c(flag_vec, flag)
             binding_state_vec <- c(binding_state_vec, state)
         }
-
+        
     }
     close(ofp)
     close(ofp_verbose)
@@ -96,6 +96,6 @@ writeBindingStatesFiles <- function (
                                           fp_vec = fp_vec,
                                           m_vec = m_vec)
     return (length_and_read_info_df)
-
-
+    
+    
 }

@@ -12,7 +12,7 @@ plotMethylationCallsNanopore(
   type = "SMF",
   chromosome = "chrIII",
   start = 114300,
-  stop = 114600,
+  end = 114600,
   tr = "nanopore_meth_calls",
   label = "smac_seq",
   span_left = 1000,
@@ -36,7 +36,7 @@ plotMethylationCallsNanopore(
 
 \item{start}{Genomic start position (numeric/character)}
 
-\item{stop}{Genomic end position (numeric/character)}
+\item{end}{Genomic end position (numeric/character)}
 
 \item{tr}{Track name for BigBed file resource (default: "nanopore_meth_calls")}
 
@@ -73,7 +73,7 @@ plotMethylationCallsNanopore (
         organism = "scerevisiae", model = "BY4741 strain",
         condition = "WT", genome_assembly = "sacCer3",
         type = "SMF", chromosome = "chrIII",
-        start = 114300, stop = 114600,
+        start = 114300, end = 114600,
         tr = "nanopore_meth_calls", label = "smac_seq",
         span_left = 1000, span_right = 1000, stride = 5, target_dir = "")
 }

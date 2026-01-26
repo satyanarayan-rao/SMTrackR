@@ -12,7 +12,7 @@ plotFootprints(
   type = "dSMF",
   chromosome = "chr2L",
   start = 480290,
-  stop = 480320,
+  end = 480320,
   tr = "fp_and_mvec",
   label = "peak229",
   span_left = 150,
@@ -37,7 +37,7 @@ plotFootprints(
 
 \item{start}{Genomic start position (numeric/character)}
 
-\item{stop}{Genomic end position (numeric/character)}
+\item{end}{Genomic end position (numeric/character)}
 
 \item{tr}{Track name for BigBed file resource (default: "fp_and_mvec")}
 
@@ -72,6 +72,6 @@ plotFootprints()
 
 # Custom genomic region analysis
 plotFootprints(
-  chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
+  chromosome = "chr2L", start = 480290, end = 480320, label = "peak229")
 
 }

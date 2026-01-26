@@ -12,7 +12,7 @@ plotFootprintsUsingLocalBigBed(
   genome_assembly = "dm3",
   chromosome = "chr2L",
   start = 480290,
-  stop = 480320,
+  end = 480320,
   label = "peak229",
   span_left = 150,
   span_right = 150,
@@ -36,7 +36,7 @@ plotFootprintsUsingLocalBigBed(
 
 \item{start}{Genomic start position (numeric/character)}
 
-\item{stop}{Genomic end position (numeric/character)}
+\item{end}{Genomic end position (numeric/character)}
 
 \item{label}{Plot title annotation}
 
@@ -68,6 +68,6 @@ plotFootprintsUsingLocalBigBed()
 plotFootprintsUsingLocalBigBed(
   bigBed = "inst/extdata/demo.bb", organism = "dmelanogaster",
   model = "S2", condition = "WT", genome_assembly = "dm3",
-  chromosome = "chr2L", start = 480290, stop = 480320, label = "peak229")
+  chromosome = "chr2L", start = 480290, end = 480320, label = "peak229")
 
 }

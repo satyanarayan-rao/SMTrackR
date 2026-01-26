@@ -1,8 +1,8 @@
 savePlotSMForDSMF <- function (label = "peak229",
-                           span_left = 150, span_right = 150, 
-                           plot_title = "dmelanogaster S2 WT",
-                           x_label = "peak229 (dm6 chr2L:480290-480320)",
-                           target_dir = ""){
+                               span_left = 150, span_right = 150, 
+                               plot_title = "dmelanogaster S2 WT",
+                               x_label = "peak229 (dm6 chr2L:480290-480320)",
+                               target_dir = ""){
     dat_for_plot <- read.table(paste(target_dir, paste0(label, ".num.fp.tsv"),
                                      sep = "/"),
                                sep = "\t", header = FALSE,
@@ -11,9 +11,9 @@ savePlotSMForDSMF <- function (label = "peak229",
     dat_for_plot <- dat_for_plot[!grepl("#3", row.names (dat_for_plot)), ]
     #reverse the dataframe: bring bottom row to the top
     #remove not valid states i.e. state 3 for now.
-
+    
     dat_for_plot <- apply(dat_for_plot, 2, rev)
-
+    
     main_dir <- target_dir
     if (!dir.exists(main_dir)){
         dir.create(main_dir, recursive = TRUE)
@@ -22,7 +22,7 @@ savePlotSMForDSMF <- function (label = "peak229",
     if (!dir.exists(plot_dir)){
         dir.create(plot_dir, recursive = TRUE)
     }
-
+    
     all_valid_states <- data.frame(table(
         unlist(lapply (row.names(dat_for_plot),
                        function (x) {
@@ -44,29 +44,30 @@ savePlotSMForDSMF <- function (label = "peak229",
                 file.path(plot_dir, paste0(label, ".states.tsv")),
                 row.names = FALSE, col.names = TRUE, sep = "\t", quote = FALSE)
     total_molecules <- nrow(dat_for_plot)
-
-    jj <- as.matrix (dat_for_plot)
+    
+    dat_matrix <- as.matrix (dat_for_plot)
     x_width <- span_left + span_right + 1
-    if (nrow(jj) > 15){
-
+    if (nrow(dat_matrix) > 15){
+        
         pdf (file.path(plot_dir, paste0(label, ".heatmap.pdf")),
              height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
-        image(1:ncol(jj), 1:nrow(jj), t(jj),  axes = FALSE, useRaster = TRUE,
+        image(1:ncol(dat_matrix), 1:nrow(dat_matrix), t(dat_matrix),  
+              axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
                                         "1"  = "Red" , "2" = "#2b8cbe"),
               xlim = c(-30, x_width), xlab = paste0("           ", x_label), 
               ylab = "", main = paste0("      ", plot_title))
-
-
+        
+        
         counter <- 1
         for (i in rev(seq (nrow(all_valid_states)) )){
             line_loc <- all_valid_states[i, "line_loc"]
             label_loc <- all_valid_states[i, "label_loc"]
             state_label <- all_valid_states[i, "state_label"]
             cnt <- all_valid_states[i, "count"]
-
+            
             if (counter < nrow(all_valid_states)) {
                 segments(-30, (line_loc + 0.5), x_width,
                          (line_loc + 0.5), lwd = 0.5)
@@ -80,9 +81,9 @@ savePlotSMForDSMF <- function (label = "peak229",
             }
             counter <- counter + 1
         }
-
-
-
+        
+        
+        
         # Draw vertical red line +/- 15 bases from `0`
         segments((span_left - 15) , 0, (span_left - 15),
                  (total_molecules + 0.5), lwd = 0.5, col = "Red")
@@ -94,9 +95,9 @@ savePlotSMForDSMF <- function (label = "peak229",
         axis(1, ticks_at,
              lab_at_ticks,
              srt = 2, cex.lab = 0.5, tck = -0.01, tick = FALSE)
-
+        
         box(lwd=0.5)
-
+        
         #saveToPDF(file.path(plot_dir, paste0(label, ".heatmap.pdf")),
         #          height = 6, width = 4.5)
         #saveToPNG(file.path(plot_dir, paste0(label, ".plot.png")),
@@ -108,7 +109,7 @@ savePlotSMForDSMF <- function (label = "peak229",
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
         dev.control("enable")
-
+        
         dev.copy(png, file.path(plot_dir, paste0(label, ".heatmap.png")),
                  height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
@@ -119,23 +120,23 @@ savePlotSMForDSMF <- function (label = "peak229",
         cat ("\n")
         
     }else {
-
+        
         pdf (file.path(plot_dir, paste0(label, ".heatmap.pdf")),
              height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
         plot(c(0, 1), c(0, 1), ann = FALSE, bty = 'n', type = 'n',
              xaxt = 'n', yaxt = 'n');
-        text(x = 0.5, y = 0.5, paste0("Only ", nrow (jj),
+        text(x = 0.5, y = 0.5, paste0("Only ", nrow (dat_matrix),
                                       " molecules, not enough for plotting"))
-
+        
         dev.copy(postscript, file.path(plot_dir, paste0(label, ".heatmap.eps")),
                  height = 6, width = 4.5, 
                  horizontal = FALSE, paper = "special")
         dev.control("enable")
-
-        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
-                 height = 6, width = 4.5, units = "in", res = 300)
+        
+        dev.print(png, file.path(plot_dir, paste0(label, ".plot.png")),
+                  height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
         dev.off()
         dev.off()
@@ -144,5 +145,5 @@ savePlotSMForDSMF <- function (label = "peak229",
         cat ("\n")
         
     }
-
+    return (file.path(plot_dir, paste0(label, ".heatmap.pdf")))
 }

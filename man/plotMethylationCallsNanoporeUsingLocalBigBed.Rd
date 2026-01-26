@@ -8,7 +8,7 @@ plotMethylationCallsNanoporeUsingLocalBigBed(
   bigBed = "",
   chromosome = "chrIII",
   start = 114300,
-  stop = 114600,
+  end = 114600,
   label = "smac_seq",
   span_left = 1000,
   span_right = 1000,
@@ -24,7 +24,7 @@ plotMethylationCallsNanoporeUsingLocalBigBed(
 
 \item{start}{Genomic start position (numeric/character)}
 
-\item{stop}{Genomic end position (numeric/character)}
+\item{end}{Genomic end position (numeric/character)}
 
 \item{label}{Plot title annotation}
 
