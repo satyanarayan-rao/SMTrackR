@@ -1,7 +1,7 @@
 Package: SMTrackR
 Type: Package
 Title: SMTrackR: a R/Bioconductor package for mapping protein binding at individual DNA molecules
-Version: 0.99.1
+Version: 0.99.2
 Date: 2024-12-31
 Authors@R:
     c( person (given = "Aashna",
@@ -19,10 +19,11 @@ Authors@R:
        person (given = "Satyanarayan",
                family = "Rao", 
                role = c("aut", "cre"),
-               email = "satyanarayan.rao@bt.iitr.ac.in")
+               email = "satyanarayan.rao@bt.iitr.ac.in",
+               comment = c(ORCID="0000-0001-7678-3505"))
      )
 Description: Uses Bisulfite converted reads to infer protein-DNA binding.
-biocViews: NucleosomePositioning, Visualization
+biocViews: NucleosomePositioning, Visualization, GeneTarget, GenomeAssembly
 Imports: jsonlite, GenomicRanges, rtracklayer, stringr
 License: MIT + file LICENSE
 Suggests: knitr, rmarkdown
@@ -30,4 +31,6 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 Depends: 
-    R (>= 3.5)
+    R (>= 4.5)
+URL: https://www.raolab.in
+BugReports: satyanarayan.rao@bt.iitr.ac.in
