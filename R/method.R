@@ -662,74 +662,80 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                               assembly = genome_assembly, st = start,
                               en = end, label = label, tr = tr, 
                               target_dir = target_dir)
-    tmp_file <- JSON_to_Bed(json_file = json_file, label = label, tr = tr,
-                            target_dir = target_dir)
-    subject_file <- NA
-    if (remove_dup == TRUE){
-        subject_file <- remove_duplicate_molecules(fp_file = tmp_file,
-                                                   label = label, target_dir = target_dir)
-    }else{
-        subject_file <- tmp_file
+    if (is.na(json_file)){
+        print ("Download from UCSC REST API failed!")
+        return (NA)
+    }else {
+    
+        tmp_file <- JSON_to_Bed(json_file = json_file, label = label, tr = tr,
+                                target_dir = target_dir)
+        subject_file <- NA
+        if (remove_dup == TRUE){
+            subject_file <- remove_duplicate_molecules(fp_file = tmp_file,
+                                                       label = label, target_dir = target_dir)
+        }else{
+            subject_file <- tmp_file
+        }
+        query_file <- prepareQueryFile(chromosome = chromosome,
+                                       start = start, end = end, 
+                                       label = label, target_dir = target_dir)
+        
+        overlap_df <- intersectQueryandSubject(query_file = query_file,
+                                               subject_file = subject_file)
+        # successful execution of this function will ensure that `overlap` file is
+        # generated
+        # get the second last column of the overlap_df and parse it using "|" as
+        # delimiter. Example:
+        # SRR3133329.41244179_41244179/1_adjacent`99~147|.131F52.77F35.5|.19h.33z.30h.14h.9z.20Z.4z.47H.3X.4H.Z.8Z.H.5Z.8X.9Z.18H.9Z.18x.16H.4
+        # 2nd field is footprint, 3rd field is methylation vector
+        fp_and_mvec_info <- overlap_df[, (length(overlap_df) - 1)]
+        read_details <- unlist (lapply(fp_and_mvec_info,
+                                       function (x) {
+                                           yt = unlist(strsplit(x, split = "\\|")
+                                           )[1] }))
+        fp_vec <- unlist (lapply(fp_and_mvec_info,
+                                 function (x) {
+                                     yt = unlist(strsplit(x, split = "\\|")
+                                     )[2] }))
+        m_vec <- unlist (lapply(fp_and_mvec_info,
+                                function (x) {
+                                    yt = unlist(strsplit(x, split = "\\|"))[3] }))
+        expanded_fp <- unlist(lapply(fp_vec, expand_cigar_string))
+        expanded_m_vec <- unlist (lapply(m_vec, expand_cigar_string))
+        combined <- data.frame (expanded_m_vec = expanded_m_vec,
+                                expanded_fp = expanded_fp)
+        with_edges <- unlist (apply(combined, 1,
+                                    function(x){
+                                        add_footprints_on_edges(x[1], x[2])} ))
+        processed_df <- overlap_df[, c(1,2,3,4,5,6)]
+        processed_df$read_details <- read_details
+        processed_df$score <- 1.0
+        processed_df$strand <- "."
+        processed_df$expanded_footprint <- with_edges
+        processed_df$expanded_m_vec <- expanded_m_vec
+        length_and_read_info_df <- writeBindingStatesFiles (
+            processed_df = processed_df,
+            label = label,fp_cap = fp_cap,
+            span_left = span_left, span_right = span_right,
+            target_dir = target_dir)
+        ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
+                                                           order(binding_state_vec,
+                                                                 flag_vec,
+                                                                 abs_start_vec)),]
+        
+        writeIntermediateFiles(ordered_by_length = ordered_by_length,
+                               label = label, target_dir = target_dir)
+        
+        plot_title = paste0(organism, " ", model, " ", condition)
+        x_label = paste0(label, " (", genome_assembly, " ", 
+                         chromosome, ":", start, "-", end, ")")
+        pdf_file_path = savePlotSMForDSMF(label = label, span_left = span_left, 
+                                          span_right = span_right, plot_title = plot_title,
+                                          x_label = x_label, target_dir = target_dir)
+        #removing the intermediate files:
+        deleteIntermediates(label = label, target_dir = target_dir)
+        return (pdf_file_path) 
     }
-    query_file <- prepareQueryFile(chromosome = chromosome,
-                                   start = start, end = end, 
-                                   label = label, target_dir = target_dir)
-    
-    overlap_df <- intersectQueryandSubject(query_file = query_file,
-                                           subject_file = subject_file)
-    # successful execution of this function will ensure that `overlap` file is
-    # generated
-    # get the second last column of the overlap_df and parse it using "|" as
-    # delimiter. Example:
-    # SRR3133329.41244179_41244179/1_adjacent`99~147|.131F52.77F35.5|.19h.33z.30h.14h.9z.20Z.4z.47H.3X.4H.Z.8Z.H.5Z.8X.9Z.18H.9Z.18x.16H.4
-    # 2nd field is footprint, 3rd field is methylation vector
-    fp_and_mvec_info <- overlap_df[, (length(overlap_df) - 1)]
-    read_details <- unlist (lapply(fp_and_mvec_info,
-                                   function (x) {
-                                       yt = unlist(strsplit(x, split = "\\|")
-                                       )[1] }))
-    fp_vec <- unlist (lapply(fp_and_mvec_info,
-                             function (x) {
-                                 yt = unlist(strsplit(x, split = "\\|")
-                                 )[2] }))
-    m_vec <- unlist (lapply(fp_and_mvec_info,
-                            function (x) {
-                                yt = unlist(strsplit(x, split = "\\|"))[3] }))
-    expanded_fp <- unlist(lapply(fp_vec, expand_cigar_string))
-    expanded_m_vec <- unlist (lapply(m_vec, expand_cigar_string))
-    combined <- data.frame (expanded_m_vec = expanded_m_vec,
-                            expanded_fp = expanded_fp)
-    with_edges <- unlist (apply(combined, 1,
-                                function(x){
-                                    add_footprints_on_edges(x[1], x[2])} ))
-    processed_df <- overlap_df[, c(1,2,3,4,5,6)]
-    processed_df$read_details <- read_details
-    processed_df$score <- 1.0
-    processed_df$strand <- "."
-    processed_df$expanded_footprint <- with_edges
-    processed_df$expanded_m_vec <- expanded_m_vec
-    length_and_read_info_df <- writeBindingStatesFiles (
-        processed_df = processed_df,
-        label = label,fp_cap = fp_cap,
-        span_left = span_left, span_right = span_right,
-        target_dir = target_dir)
-    ordered_by_length <- length_and_read_info_df[with (length_and_read_info_df,
-                                                       order(binding_state_vec,
-                                                             flag_vec,
-                                                             abs_start_vec)),]
-    
-    writeIntermediateFiles(ordered_by_length = ordered_by_length,
-                           label = label, target_dir = target_dir)
-    
-    plot_title = paste0(organism, " ", model, " ", condition)
-    x_label = paste0(label, " (", genome_assembly, " ", 
-                     chromosome, ":", start, "-", end, ")")
-    pdf_file_path = savePlotSMForDSMF(label = label, span_left = span_left, 
-                                      span_right = span_right, plot_title = plot_title,
-                                      x_label = x_label, target_dir = target_dir)
-    #removing the intermediate files:
-    deleteIntermediates(label = label, target_dir = target_dir)
-    return (pdf_file_path) 
 }
 
 
@@ -977,65 +983,70 @@ plotMethylationCallsNanopore <- function(
                               assembly = genome_assembly, st = start,
                               en = end, label = label, tr = tr, 
                               target_dir = target_dir)
-    subject_file <- JSON_to_Bed_for_Nanopore(json_file = json_file,
-                                             label = label, tr = tr,
-                                             target_dir = target_dir)
-    query_file <- prepareQueryFile(chromosome = chromosome,
-                                   start = start, end = end, 
-                                   label = label, target_dir = target_dir)
-    
-    overlap_df <- intersectQueryandSubject(query_file = query_file,
-                                           subject_file = subject_file)
-    
-    overlap_df_for_plot = overlap_df[, c(1, 2, 3,4,5,6,7,8)]
-    read_id <- unlist (lapply(overlap_df$name,
-                              function (x) {
-                                  yt = unlist(strsplit(x, split = "\\|")
-                                  )[1] }))
-    methylation_call <- unlist (lapply(overlap_df$name,
-                                       function (x) {
-                                           yt = unlist(strsplit(x, split = "\\|")
-                                           )[2] }))
-    overlap_df_for_plot$name = read_id
-    overlap_df_for_plot$score = overlap_df$score
-    overlap_df_for_plot$methylation_call = methylation_call
-    
-    write.table(overlap_df_for_plot, 
-                file = paste(target_dir, paste0(label, ".intersect.bed"), 
-                             sep = "/"),
-                sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df_for_plot,
-                                                        span_left = span_left,
-                                                        span_right = span_right)
-    data_to_plot = data_to_plot_and_strand_map_df$out_mat
-    strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
-    pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
-    neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
-    
-    center = as.integer(dim(data_to_plot)[2]/2)
-    half_width = as.integer((as.integer(end) - as.integer(start))/(2*stride) )
-    l_index = center - half_width
-    r_index = center + half_width
-    sub_df = data_to_plot[, seq (l_index, r_index)]
-    sum_by_row = apply(sub_df, 1, sum)
-    tmp = strand_map_df
-    
-    ordered_by_methylation = sum_by_row[order(sum_by_row)]
-    tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
-    ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
-    data_to_plot = data_to_plot[row.names(ordered_tmp),]
-    write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
-                 file = paste (target_dir, 
-                               paste0(label, ".strand_wise_count.tsv"), sep = "/"),
-                 sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
-    write.table (data_to_plot, file = paste(target_dir, 
-                                            paste0(label, ".nanopore_methylation.tsv"), sep = "/"),
-                 sep = "\t", row.names = TRUE, col.names = FALSE, quote = FALSE)
-    plot_title = paste0(organism, " ", model, " ", condition)
-    x_label = paste0(label, " (", genome_assembly, " ", 
-                     chromosome, ":", start, "-", end, ")")
-    savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label,
+    if (is.na(json_file)){
+        print("JSON download from UCSC REST API failed")
+        return (NA)
+    } else {
+        subject_file <- JSON_to_Bed_for_Nanopore(json_file = json_file,
+                                                 label = label, tr = tr,
+                                                 target_dir = target_dir)
+        query_file <- prepareQueryFile(chromosome = chromosome,
+                                       start = start, end = end, 
+                                       label = label, target_dir = target_dir)
+        
+        overlap_df <- intersectQueryandSubject(query_file = query_file,
+                                               subject_file = subject_file)
+        
+        overlap_df_for_plot = overlap_df[, c(1, 2, 3,4,5,6,7,8)]
+        read_id <- unlist (lapply(overlap_df$name,
+                                  function (x) {
+                                      yt = unlist(strsplit(x, split = "\\|")
+                                      )[1] }))
+        methylation_call <- unlist (lapply(overlap_df$name,
+                                           function (x) {
+                                               yt = unlist(strsplit(x, split = "\\|")
+                                               )[2] }))
+        overlap_df_for_plot$name = read_id
+        overlap_df_for_plot$score = overlap_df$score
+        overlap_df_for_plot$methylation_call = methylation_call
+        
+        write.table(overlap_df_for_plot, 
+                    file = paste(target_dir, paste0(label, ".intersect.bed"), 
+                                 sep = "/"),
+                    sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df_for_plot,
+                                                            span_left = span_left,
+                                                            span_right = span_right)
+        data_to_plot = data_to_plot_and_strand_map_df$out_mat
+        strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
+        pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
+        neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
+        
+        center = as.integer(dim(data_to_plot)[2]/2)
+        half_width = as.integer((as.integer(end) - as.integer(start))/(2*stride) )
+        l_index = center - half_width
+        r_index = center + half_width
+        sub_df = data_to_plot[, seq (l_index, r_index)]
+        sum_by_row = apply(sub_df, 1, sum)
+        tmp = strand_map_df
+        
+        ordered_by_methylation = sum_by_row[order(sum_by_row)]
+        tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
+        ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
+        data_to_plot = data_to_plot[row.names(ordered_tmp),]
+        write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
+                     file = paste (target_dir, 
+                                   paste0(label, ".strand_wise_count.tsv"), sep = "/"),
+                     sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
+        write.table (data_to_plot, file = paste(target_dir, 
+                                                paste0(label, ".nanopore_methylation.tsv"), sep = "/"),
+                     sep = "\t", row.names = TRUE, col.names = FALSE, quote = FALSE)
+        plot_title = paste0(organism, " ", model, " ", condition)
+        x_label = paste0(label, " (", genome_assembly, " ", 
+                         chromosome, ":", start, "-", end, ")")
+        savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label,
                      target_dir = target_dir)
+    }
 }
 
 

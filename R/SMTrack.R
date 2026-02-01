@@ -7,10 +7,26 @@ retrieve_json <- function (track_url = "", assembly = "dm6",
                               "track=", tr, ";",
                               "chrom=", chromosome,";",
                               "start=", st,";", "end=", en)
-    download.file(download_command, paste (target_dir, paste0(label, ".json"),
-                                           sep = "/"))
-    json_path = paste (target_dir, paste0(label, ".json"),sep = "/")
-    return (json_path)
+
+    tryCatch (
+        {
+            download.file(download_command, 
+                      paste (target_dir, paste0(label, ".json"), sep = "/"))
+        }, 
+        error = function(e) {
+            print (paste0("Download failed with error ", e))
+            return (NA)
+        },
+        warning = function(w) {
+            print (paste0("Please see the warning ", w))
+            return (NA)
+        },
+        finally = {
+            
+            json_path = paste (target_dir, paste0(label, ".json"),sep = "/")
+            return (json_path)
+        }
+    )
 }
 
 downloadJson <- function (track_url = "", assembly = "dm6",

@@ -135,7 +135,7 @@ savePlotSMForDSMF <- function (label = "peak229",
                  horizontal = FALSE, paper = "special")
         dev.control("enable")
         
-        dev.print(png, file.path(plot_dir, paste0(label, ".plot.png")),
+        dev.copy(png, file.path(plot_dir, paste0(label, ".plot.png")),
                   height = 6, width = 4.5, units = "in", res = 300)
         dev.off()
         dev.off()

@@ -1,7 +1,7 @@
 Package: SMTrackR
 Type: Package
 Title: SMTrackR: a R/Bioconductor package for mapping protein binding at individual DNA molecules
-Version: 0.99.2
+Version: 0.99.3
 Date: 2024-12-31
 Authors@R:
     c( person (given = "Aashna",
@@ -33,4 +33,5 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.5)
 URL: https://www.raolab.in
-BugReports: satyanarayan.rao@bt.iitr.ac.in
+BugReports: https://www.raolab.in
+Contact: mailto:satyanarayan.rao@bt.iitr.ac.in
