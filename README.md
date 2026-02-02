@@ -22,7 +22,7 @@ Please use the following command to install this package in `R`
 
 ```
 library(devtools)
-devtools::install_github("satyanarayan-rao/SMTrackR") 
+devtools::install_github("satyanarayan-rao/SMTrackR", build_vignettes=TRUE, force=TRUE)
 ```
 
 ## Generating Protein-DNA binding Visualization

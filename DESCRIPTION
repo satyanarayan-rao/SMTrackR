@@ -1,7 +1,7 @@
 Package: SMTrackR
 Type: Package
 Title: SMTrackR: a R/Bioconductor package for mapping protein binding at individual DNA molecules
-Version: 0.99.3
+Version: 0.99.4
 Date: 2024-12-31
 Authors@R:
     c( person (given = "Aashna",
