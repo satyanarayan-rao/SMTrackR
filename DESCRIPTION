@@ -1,7 +1,7 @@
 Package: SMTrackR
 Type: Package
 Title: SMTrackR: a R/Bioconductor package for mapping protein binding at individual DNA molecules
-Version: 0.99.4
+Version: 0.99.5
 Date: 2024-12-31
 Authors@R:
     c( person (given = "Aashna",
@@ -22,9 +22,9 @@ Authors@R:
                email = "satyanarayan.rao@bt.iitr.ac.in",
                comment = c(ORCID="0000-0001-7678-3505"))
      )
-Description: Uses Bisulfite converted reads to infer protein-DNA binding.
+Description: The package uses exogenous enzyme imprinted information to map protein-DNA binding on individual sequenced DNA molecules. For example, GpC methyltransferase, CpG methyltransferase, and Adenine methyltransferases. Public datasets from such assays are compiled into tracks, and hosted at public servers like Galaxy for their seamless access by this package.
 biocViews: NucleosomePositioning, Visualization, GeneTarget, GenomeAssembly
-Imports: jsonlite, GenomicRanges, rtracklayer, stringr
+Imports: jsonlite, GenomicRanges, rtracklayer, stringr, BiocFileCache, S4Vectors
 License: MIT + file LICENSE
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

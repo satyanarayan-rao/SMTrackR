@@ -129,7 +129,7 @@ expand_cigar_string <- function (cigar_string = ".131F52.77F35.5"){
             return (expand_cigar)
         }else { return (cigar_string) }
     }else {
-        for (j in 1:(length(idx_vec) - 1) ){
+        for (j in seq(1,(length(idx_vec) - 1)) ){
             idx_c <- idx_vec[j]
             idx_n <- idx_vec[j+1]
             if (idx_n - idx_c == 1){
@@ -266,7 +266,7 @@ capital_percentage_and_stretch_of_unbound <- function (methylation_vector = ""){
             total_capital <- total_capital + 1
             if (first_found == FALSE){
                 left_extreme <- base_counter
-                first_found = TRUE
+                first_found <- TRUE
             } else {
                 last_capital <- base_counter
             }
@@ -275,7 +275,7 @@ capital_percentage_and_stretch_of_unbound <- function (methylation_vector = ""){
         }
         
     }
-    naked_dna_stretches = c()
+    naked_dna_stretches <- c()
     if (first_found == TRUE) {
         if (last_capital == -1){
             naked_dna_stretches <- c (naked_dna_stretches, left_extreme)
@@ -289,7 +289,7 @@ capital_percentage_and_stretch_of_unbound <- function (methylation_vector = ""){
                                       right_extreme - last_capital) # check if -1 is required
         }
     }else {
-        naked_dna_stretches = c(0,0,0)
+        naked_dna_stretches <- c(0,0,0)
         
     }
     total <- total_capital + total_small
@@ -312,7 +312,7 @@ get_percent_for_each_footprint <- function (footprint_vector = ""){
         char <- str_sub(footprint_vector, idx_char, idx_char)
         if (char == "F"){
             cnt <- cnt + 1
-            f_switch = TRUE
+            f_switch <- TRUE
         }else{
             if (cnt != 0){
                 per <- round ((cnt/total_length)*100, 2)
@@ -333,7 +333,7 @@ assign_binding_states <- function (overlap_string = "",
                                    lextend = 30, rextend = 30,
                                    fp_cap = 50){
     all_info <- unlist (str_split(overlap_string, pattern = "\t"))
-    labels_for_info = c("chrQ", "abs_roi_start", "abs_roi_end",
+    labels_for_info <- c("chrQ", "abs_roi_start", "abs_roi_end",
                         "chrS", "abs_read_start", "abs_read_end",
                         "read_id", "score", "strand", "complete_fp_str",
                         "complete_m_str")
@@ -354,7 +354,7 @@ assign_binding_states <- function (overlap_string = "",
     intersected_m_str <- str_sub (complete_m_str, rel_roi_start, rel_roi_end)
     
     #stop("here")
-    fp_info_query = fp_info_for_sub_molecule (
+    fp_info_query <- fp_info_for_sub_molecule (
         query_footprint = intersected_fp_str,
         query_start = rel_roi_start,
         query_end = rel_roi_end,
@@ -478,7 +478,7 @@ assign_binding_states <- function (overlap_string = "",
             label <- "Nuc"
         }
     }
-    label_id = label_list[[label]]
+    label_id <- label_list[[label]]
     return (list(labelled = labelled,
                  label = label,
                  label_id = label_id,
@@ -572,7 +572,7 @@ remove_duplicate_molecules <- function (fp_file = "peak229.all_fp.bed",
                                      strsplit (x, split = "`"))[[2]]}))
     idx_duplicate <- which (duplicated(dt[, c ("V1", "V2", "V3",
                                                "srr", "mol")]))
-    uniq_mol_df = dt[-idx_duplicate, ]
+    uniq_mol_df <- dt[-idx_duplicate, ]
     dup_mol_df <- dt[idx_duplicate, ]
     uniq_mol_df$srr <- NULL
     uniq_mol_df$mol <- NULL
@@ -650,7 +650,7 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
     # get JSON first
     #print (track)
     if (target_dir == ""){
-        target_dir = tempdir()
+        target_dir <- tempdir()
     }else if (!dir.exists(target_dir)){
         dir.create(target_dir, recursive = TRUE)
     }
@@ -727,9 +727,9 @@ plotFootprints <- function (organism = "dmelanogaster", model = "S2",
                                label = label, target_dir = target_dir)
         
         plot_title = paste0(organism, " ", model, " ", condition)
-        x_label = paste0(label, " (", genome_assembly, " ", 
+        x_label <- paste0(label, " (", genome_assembly, " ", 
                          chromosome, ":", start, "-", end, ")")
-        pdf_file_path = savePlotSMForDSMF(label = label, span_left = span_left, 
+        pdf_file_path <- savePlotSMForDSMF(label = label, span_left = span_left, 
                                           span_right = span_right, plot_title = plot_title,
                                           x_label = x_label, target_dir = target_dir)
         #removing the intermediate files:
@@ -793,14 +793,14 @@ plotFootprintsUsingLocalBigBed <- function (
         label = "peak229", span_left = 150, span_right = 150,
         remove_dup = FALSE,fp_cap = 50, target_dir = "") {
     if (bigBed == "") {
-        cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
+        message ("'bigBed' arugment is empty. bigBed file file path requied\n")
         return ("bigBed file path")
     }else if (!file.exists(bigBed)){
-        cat ("bigBed file path requied\n")
+        message ("bigBed file path requied\n")
         return ("bigBed file path")
     }
     if (target_dir == ""){
-        target_dir = tempdir()
+        target_dir <- tempdir()
     }else if (!dir.exists(target_dir)){
         dir.create(target_dir, recursive = TRUE)
     }
@@ -855,8 +855,8 @@ plotFootprintsUsingLocalBigBed <- function (
     writeIntermediateFiles(ordered_by_length = ordered_by_length,
                            label = label, target_dir = target_dir)
     
-    plot_title = paste0(organism, " ", model, " ", condition)
-    x_label = paste0(label, " (", genome_assembly, " ", 
+    plot_title <- paste0(organism, " ", model, " ", condition)
+    x_label <- paste0(label, " (", genome_assembly, " ", 
                      chromosome, ":", start, "-", end, ")")
     savePlotSMForDSMF(label = label, span_left = span_left, 
                       span_right = span_right, plot_title = plot_title, 
@@ -970,7 +970,7 @@ plotMethylationCallsNanopore <- function(
         span_left = 1000, span_right = 1000, stride = 5, target_dir = "") {
     
     if (target_dir == ""){
-        target_dir = tempdir()
+        target_dir <- tempdir()
     }else if (!dir.exists(target_dir)){
         dir.create(target_dir, recursive = TRUE)
     }
@@ -997,7 +997,7 @@ plotMethylationCallsNanopore <- function(
         overlap_df <- intersectQueryandSubject(query_file = query_file,
                                                subject_file = subject_file)
         
-        overlap_df_for_plot = overlap_df[, c(1, 2, 3,4,5,6,7,8)]
+        overlap_df_for_plot <- overlap_df[, c(1, 2, 3,4,5,6,7,8)]
         read_id <- unlist (lapply(overlap_df$name,
                                   function (x) {
                                       yt = unlist(strsplit(x, split = "\\|")
@@ -1006,9 +1006,9 @@ plotMethylationCallsNanopore <- function(
                                            function (x) {
                                                yt = unlist(strsplit(x, split = "\\|")
                                                )[2] }))
-        overlap_df_for_plot$name = read_id
-        overlap_df_for_plot$score = overlap_df$score
-        overlap_df_for_plot$methylation_call = methylation_call
+        overlap_df_for_plot$name <- read_id
+        overlap_df_for_plot$score <- overlap_df$score
+        overlap_df_for_plot$methylation_call <- methylation_call
         
         write.table(overlap_df_for_plot, 
                     file = paste(target_dir, paste0(label, ".intersect.bed"), 
@@ -1017,23 +1017,23 @@ plotMethylationCallsNanopore <- function(
         data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df_for_plot,
                                                             span_left = span_left,
                                                             span_right = span_right)
-        data_to_plot = data_to_plot_and_strand_map_df$out_mat
-        strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
-        pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
-        neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
+        data_to_plot <- data_to_plot_and_strand_map_df$out_mat
+        strand_map_df <- data_to_plot_and_strand_map_df$strand_map_df
+        pos_strand_reads <- names (strand_map_df[strand_map_df$strand == "+", ])
+        neg_strand_reads <- names (strand_map_df[strand_map_df$strand == "-", ])
         
-        center = as.integer(dim(data_to_plot)[2]/2)
-        half_width = as.integer((as.integer(end) - as.integer(start))/(2*stride) )
-        l_index = center - half_width
-        r_index = center + half_width
-        sub_df = data_to_plot[, seq (l_index, r_index)]
-        sum_by_row = apply(sub_df, 1, sum)
-        tmp = strand_map_df
+        center <- as.integer(dim(data_to_plot)[2]/2)
+        half_width <- as.integer((as.integer(end) - as.integer(start))/(2*stride) )
+        l_index <- center - half_width
+        r_index <- center + half_width
+        sub_df <- data_to_plot[, seq (l_index, r_index)]
+        sum_by_row <- apply(sub_df, 1, sum)
+        tmp <- strand_map_df
         
-        ordered_by_methylation = sum_by_row[order(sum_by_row)]
-        tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
-        ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
-        data_to_plot = data_to_plot[row.names(ordered_tmp),]
+        ordered_by_methylation <- sum_by_row[order(sum_by_row)]
+        tmp$cnt <- ordered_by_methylation[row.names(strand_map_df)]
+        ordered_tmp <- tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
+        data_to_plot <- data_to_plot[row.names(ordered_tmp),]
         write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
                      file = paste (target_dir, 
                                    paste0(label, ".strand_wise_count.tsv"), sep = "/"),
@@ -1041,8 +1041,8 @@ plotMethylationCallsNanopore <- function(
         write.table (data_to_plot, file = paste(target_dir, 
                                                 paste0(label, ".nanopore_methylation.tsv"), sep = "/"),
                      sep = "\t", row.names = TRUE, col.names = FALSE, quote = FALSE)
-        plot_title = paste0(organism, " ", model, " ", condition)
-        x_label = paste0(label, " (", genome_assembly, " ", 
+        plot_title <- paste0(organism, " ", model, " ", condition)
+        x_label <- paste0(label, " (", genome_assembly, " ", 
                          chromosome, ":", start, "-", end, ")")
         savePlotNanopore(label = label, plot_title = plot_title, x_label = x_label,
                      target_dir = target_dir)
@@ -1093,14 +1093,14 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
         remove_dup = FALSE, stride = 5, target_dir = "") {
     
     if (bigBed == "") {
-        cat ("'bigBed' arugment is empty. bigBed file file path requied\n")
+        message ("'bigBed' arugment is empty. bigBed file file path requied\n")
         return ("bigBed file path")
     }else if (!file.exists(bigBed)){
-        cat ("bigBed file path requied\n")
+        message ("bigBed file path requied\n")
         return ("bigBed file path")
     }
     if (target_dir == ""){
-        target_dir = tempdir()
+        target_dir <- tempdir()
     }else if (!dir.exists(target_dir)){
         dir.create(target_dir, recursive = TRUE)
     }
@@ -1119,23 +1119,23 @@ plotMethylationCallsNanoporeUsingLocalBigBed <- function (
     data_to_plot_and_strand_map_df = generatePlotMatrix(overlap_df,
                                                         span_left = span_left,
                                                         span_right = span_right)
-    data_to_plot = data_to_plot_and_strand_map_df$out_mat
-    strand_map_df = data_to_plot_and_strand_map_df$strand_map_df
-    pos_strand_reads = names (strand_map_df[strand_map_df$strand == "+", ])
-    neg_strand_reads = names (strand_map_df[strand_map_df$strand == "-", ])
+    data_to_plot <- data_to_plot_and_strand_map_df$out_mat
+    strand_map_df <- data_to_plot_and_strand_map_df$strand_map_df
+    pos_strand_reads <- names (strand_map_df[strand_map_df$strand == "+", ])
+    neg_strand_reads <- names (strand_map_df[strand_map_df$strand == "-", ])
     
-    center = as.integer(dim(data_to_plot)[2]/2)
-    half_width = as.integer((as.integer(end) - as.integer(start))/(2*stride) )
-    l_index = center - half_width
-    r_index = center + half_width
-    sub_df = data_to_plot[, seq (l_index, r_index)]
-    sum_by_row = apply(sub_df, 1, sum)
-    tmp = strand_map_df
+    center <- as.integer(dim(data_to_plot)[2]/2)
+    half_width <- as.integer((as.integer(end) - as.integer(start))/(2*stride) )
+    l_index <- center - half_width
+    r_index <- center + half_width
+    sub_df <- data_to_plot[, seq (l_index, r_index)]
+    sum_by_row <- apply(sub_df, 1, sum)
+    tmp <- strand_map_df
     
-    ordered_by_methylation = sum_by_row[order(sum_by_row)]
-    tmp$cnt = ordered_by_methylation[row.names(strand_map_df)]
-    ordered_tmp = tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
-    data_to_plot = data_to_plot[row.names(ordered_tmp),]
+    ordered_by_methylation <- sum_by_row[order(sum_by_row)]
+    tmp$cnt <- ordered_by_methylation[row.names(strand_map_df)]
+    ordered_tmp <- tmp[order(factor (tmp$strand, levels = c("-", "+")), tmp$cnt),]
+    data_to_plot <- data_to_plot[row.names(ordered_tmp),]
     write.table (table (factor(strand_map_df$strand, levels = c("-", "+"))),
                  file = paste(target_dir, paste0(label, ".strand_wise_count.tsv"),
                               sep = "/"),

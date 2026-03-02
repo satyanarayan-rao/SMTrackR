@@ -3,21 +3,21 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
                               plot_title = "scerevisiae BY4741 strain",
                               x_label = "smac_seq (sacCer3 chrIII:114300-114600)",
                               target_dir = ""){
-    data_to_plot = read.table (paste(target_dir, 
+    data_to_plot <- read.table (paste(target_dir, 
                                      paste0(label, ".nanopore_methylation.tsv"),
                                      sep = "/"),
                                sep = "\t", header = FALSE, stringsAsFactors = FALSE,
                                row.names = 1)
-    strand_counts_df = read.table(paste(target_dir, 
+    strand_counts_df <- read.table(paste(target_dir, 
                                         paste0(label, ".strand_wise_count.tsv"),
                                         sep = "/"),
                                   sep = "\t", header = FALSE, stringsAsFactors = FALSE)
-    row.names(strand_counts_df) = strand_counts_df$V1
-    mid_point_minus_strand = strand_counts_df["-", "V2"]/2
-    mid_point_plus_strand = strand_counts_df["-", "V2"] + strand_counts_df["+", "V2"]/2
+    row.names(strand_counts_df) <- strand_counts_df$V1
+    mid_point_minus_strand <- strand_counts_df["-", "V2"]/2
+    mid_point_plus_strand <- strand_counts_df["-", "V2"] + strand_counts_df["+", "V2"]/2
     
-    x_width = dim(data_to_plot)[2]
-    total_molecules = dim(data_to_plot)[1]
+    x_width <- dim(data_to_plot)[2]
+    total_molecules <- dim(data_to_plot)[1]
     main_dir <- target_dir
     if (!dir.exists(main_dir)){
         dir.create(main_dir, recursive = TRUE)
@@ -34,7 +34,7 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         dev.control("enable")
         
         par(mgp=c(1.5,0.25,0), cex = 1)
-        image(1:ncol(data_to_plot), 1:nrow(data_to_plot), t(data_to_plot),
+        image(seq(1,ncol(data_to_plot)), seq(1,nrow(data_to_plot)), t(data_to_plot),
               axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
                                         "1"  = "Red" , "2" = "#C7E9C0"),
@@ -44,8 +44,8 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         
         
         # Draw vertical red line +/- 15 bases from `0`
-        left_line = span_left/stride
-        right_line = x_width - (span_right/stride)
+        left_line <- span_left/stride
+        right_line <- x_width - (span_right/stride)
         segments(left_line , 0, left_line,
                  (total_molecules + 0.5), lwd = 0.5, col = "Blue")
         segments(right_line, 0, right_line,
@@ -84,9 +84,9 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         dev.off()
         dev.off()
         dev.off()
-        cat (paste0("Heatmap is saved in the file ", 
+        message (paste0("Heatmap is saved in the file ", 
                     file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
-        cat ("\n")
+        message ("\n")
         
     }else {
         
@@ -109,9 +109,9 @@ savePlotNanopore <- function (label = "smac_seq", span_left = 1000,
         dev.off()
         dev.off()
         dev.off()
-        cat (paste0("Heatmap is saved in the file ", 
+        message (paste0("Heatmap is saved in the file ", 
                     file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
-        cat ("\n")
+        message ("\n")
         
     }
     

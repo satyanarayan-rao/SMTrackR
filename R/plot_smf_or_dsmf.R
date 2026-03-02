@@ -53,7 +53,7 @@ savePlotSMForDSMF <- function (label = "peak229",
              height = 6, width = 4.5, bg = "white")
         dev.control("enable")
         par(mgp=c(1.5,0.25,0), cex = 0.75)
-        image(1:ncol(dat_matrix), 1:nrow(dat_matrix), t(dat_matrix),  
+        image(seq(1,ncol(dat_matrix)), seq(1,nrow(dat_matrix)), t(dat_matrix),  
               axes = FALSE, useRaster = TRUE,
               oldstyle = FALSE, col = c("-1" = "#bdbdbd", "0" = "#FFFFFF",
                                         "1"  = "Red" , "2" = "#2b8cbe"),
@@ -115,9 +115,9 @@ savePlotSMForDSMF <- function (label = "peak229",
         dev.off()
         dev.off()
         dev.off()
-        cat (paste0("Heatmap is saved in the file ", 
+        message (paste0("Heatmap is saved in the file ", 
                     file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
-        cat ("\n")
+        message ("\n")
         
     }else {
         
@@ -140,9 +140,9 @@ savePlotSMForDSMF <- function (label = "peak229",
         dev.off()
         dev.off()
         dev.off()
-        cat (paste0("Heatmap is saved in the file ", 
+        message (paste0("Heatmap is saved in the file ", 
                     file.path(plot_dir, paste0(label, ".heatmap.pdf"))))
-        cat ("\n")
+        message ("\n")
         
     }
     return (file.path(plot_dir, paste0(label, ".heatmap.pdf")))

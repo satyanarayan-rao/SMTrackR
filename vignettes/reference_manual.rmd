@@ -71,7 +71,7 @@ SMTrackR::plotFootprints(target_dir = "dsmf")
 Running the command below will generate a pdf file `plots/smac_seq.plot.pdf`. 
 
 ```{r Plot Methylation Calls on Nanopore Reads, fig.width=10, fig.height=5, echo=TRUE}
-SMTrackR::plotMethylationCallsNanopore(target_dir = "nanopre") 
+SMTrackR::plotMethylationCallsNanopore(target_dir = "nanopore") 
 ```
 
 ## Listing Available Track

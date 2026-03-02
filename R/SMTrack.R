@@ -1,3 +1,4 @@
+bfc <- BiocFileCache::BiocFileCache()
 retrieve_json <- function (track_url = "", assembly = "dm6",
                            chromosome = "chr2L", st = "480290",
                            en = "480320", label = "peak229",
@@ -8,10 +9,9 @@ retrieve_json <- function (track_url = "", assembly = "dm6",
                               "chrom=", chromosome,";",
                               "start=", st,";", "end=", en)
 
-    tryCatch (
+    json_path <- tryCatch (
         {
-            download.file(download_command, 
-                      paste (target_dir, paste0(label, ".json"), sep = "/"))
+            json_path <- bfcrpath (bfc, download_command)
         }, 
         error = function(e) {
             print (paste0("Download failed with error ", e))
@@ -20,20 +20,16 @@ retrieve_json <- function (track_url = "", assembly = "dm6",
         warning = function(w) {
             print (paste0("Please see the warning ", w))
             return (NA)
-        },
-        finally = {
-            
-            json_path = paste (target_dir, paste0(label, ".json"),sep = "/")
-            return (json_path)
         }
     )
+    return(json_path)
 }
 
 downloadJson <- function (track_url = "", assembly = "dm6",
                           chromosome = "chr2L", st = "",
                           en = "", label = "peak229",
                           tr = "fp_and_mvec", target_dir = ""){
-    cat ("Using UCSC API to get JSON dump from BigBed Track ...\n")
+    message ("Using UCSC API to get JSON dump from BigBed Track ...\n")
     #print (c(track_url, assembly, chromosome, st, en, label))
     json_name <- retrieve_json (track_url = track_url, assembly = assembly,
                                 chromosome = chromosome, st = st, en = en,
@@ -60,7 +56,7 @@ JSON_to_Bed <- function (json_file = "peak229.json", label = "peak229",
         score <- df_of_json$score[fp]
         strand <- "+"
         m_vec <- df_of_json$field8[fp]
-        cat(paste(chrom, st, en, paste(fp_info, m_vec, sep = "|"),
+        cat (paste(chrom, st, en, paste(fp_info, m_vec, sep = "|"),
                   score, strand, sep = "\t"), file = output_file, append = TRUE)
         cat ("\n", file  = output_file, append = TRUE)
     }
@@ -89,7 +85,7 @@ JSON_to_Bed_for_Nanopore <- function (json_file = "smac_seq.json",
         strand <- df_of_json$strand[meth_call]
         m_vec <- df_of_json$field8[meth_call]
         
-        cat(paste(chrom, st, en, paste(read_id, m_vec, sep = "|"),
+        cat (paste(chrom, st, en, paste(read_id, m_vec, sep = "|"),
                   score, strand, sep = "\t"),
             file = output_file, append = TRUE)
         cat ("\n", file  = output_file, append = TRUE)
@@ -105,15 +101,15 @@ intersectQueryandSubject <- function(query_file = "peak229.bed",
                                      overlap = "peak229_overlap.bed") {
     q_obj <- import (query_file)
     s_obj <- import (subject_file)
-    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = q_obj@ranges@width,
+    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = width(q_obj),
                              select = "all")
-    q_obj_to_write <- resize (q_obj[overlaps@from, ],
-                              width(q_obj[overlaps@from, ]) + 1, fix = "end")
+    q_obj_to_write <- resize (q_obj[from(overlaps), ],
+                              width(q_obj[from(overlaps), ]) + 1, fix = "end")
     q_df = as.data.frame(q_obj_to_write)
     sub_q_df <- q_df [, seq(3)]
     
-    s_obj_to_write <- resize (s_obj[overlaps@to, ],
-                              width (s_obj[overlaps@to, ]) + 1, fix = "end")
+    s_obj_to_write <- resize (s_obj[to(overlaps), ],
+                              width (s_obj[to(overlaps), ]) + 1, fix = "end")
     s_df <- as.data.frame(s_obj_to_write)
     result_df <- cbind (sub_q_df, s_df)
     return (result_df)
@@ -125,9 +121,9 @@ prepareQueryFile <- function (chromosome = "chr2L",
                               end = 480320,
                               label = "peak229", target_dir = ""){
     query_file <- paste(target_dir, paste0(label, ".bed"), sep = "/")
-    cat (paste(chromosome, start, end, sep = "\t"),
+    cat(paste(chromosome, start, end, sep = "\t"),
          file = query_file, append = FALSE)
-    cat ("\n", file = query_file, append = TRUE)
+    cat("\n", file = query_file, append = TRUE)
     return (query_file)
 }
 
@@ -136,15 +132,15 @@ overlapUsingBigBed <- function (
         query_file = "peak229.bed"){
     q_obj <- import (query_file)
     s_obj <- import(bigbed_file, which = q_obj)
-    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = q_obj@ranges@width,
+    overlaps <- findOverlaps(q_obj, s_obj, minoverlap = width(q_obj),
                              select = "all")
-    q_obj_to_write <- resize (q_obj[overlaps@from, ],
-                              width(q_obj[overlaps@from, ]) + 1, fix = "end")
+    q_obj_to_write <- resize (q_obj[from(overlaps), ],
+                              width(q_obj[from(overlaps), ]) + 1, fix = "end")
     q_df <- as.data.frame(q_obj_to_write)
     sub_q_df <- q_df [, seq(3)]
     
-    s_obj_to_write <- resize (s_obj[overlaps@to, ],
-                              width (s_obj[overlaps@to, ]) + 1, fix = "end")
+    s_obj_to_write <- resize (s_obj[to(overlaps), ],
+                              width (s_obj[to(overlaps), ]) + 1, fix = "end")
     s_df <- as.data.frame(s_obj_to_write)
     result_df <- cbind (sub_q_df, s_df)
     return (result_df)

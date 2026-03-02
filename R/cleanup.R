@@ -9,7 +9,7 @@ deleteIntermediates <- function (label = "peak229", target_dir = ""){
     if (file.exists(paste0(label, "_verbose.tsv"))){
         file.remove(paste0(label, "_verbose.tsv"))
     }
-    if (file.exists(paste0(label, "all_fp.bed"))){
+    if (file.exists(paste0(label, ".all_fp.bed"))){
         file.remove(paste0(label, ".all_fp.bed"))
     }
     file.remove(paste0(label, ".bed"))
